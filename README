@@ -1,0 +1,2 @@
+The goal is to create a deployer chain which at the end outputs a MC bean that
+can be used as a dependency and which binds the persistence context into JNDI.

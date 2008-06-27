@@ -1,0 +1,75 @@
+<!--
+  vi:ts=2:sw=2:expandtab
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>4.0.CR1</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.jboss.jpa</groupId>
+  <artifactId>jboss-jpa-build</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>JBoss Container Managed JPA Build</name>
+  <description>
+    ToDo
+  </description>
+
+  <scm>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/jpa/trunk</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/jpa/trunk</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jpa/trunk/</url>
+  </scm>
+
+  <build>
+    <outputDirectory>${jpa.outputDirectory}</outputDirectory>
+    <testOutputDirectory>${jpa.testOutputDirectory}</testOutputDirectory>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <jpa.outputDirectory>target/classes</jpa.outputDirectory>
+        <jpa.testOutputDirectory>target/tests-classes</jpa.testOutputDirectory>
+      </properties>
+    </profile>
+    <profile>
+      <id>eclipse</id>
+      <build>
+        <defaultGoal>process-test-resources</defaultGoal>
+        <plugins>
+          <plugin>
+            <artifactId>maven-eclipse-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>eclipse</id>
+                <phase>process-test-resources</phase>
+                <goals>
+                  <goal>eclipse</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <downloadSources>true</downloadSources>
+              <buildOutputDirectory>${jpa.outputDirectory}</buildOutputDirectory>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <properties>
+        <jpa.outputDirectory>eclipse-target/classes</jpa.outputDirectory>
+        <jpa.testOutputDirectory>eclipse-target/tests-classes</jpa.testOutputDirectory>
+      </properties>
+    </profile>
+  </profiles>
+</project>
