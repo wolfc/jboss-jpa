@@ -23,10 +23,8 @@ package org.jboss.jpa.deployers;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.naming.InitialContext;
 
-import org.jboss.beans.metadata.plugins.AbstractBeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
@@ -49,10 +47,7 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
    public PersistenceUnitDeployer()
    {
       super(PersistenceUnitMetaData.class);
-      
-      // We want to process the components created by PersistenceDeployer, this seems to be the only way to get there.
       setComponentsOnly(true);
-      
       addOutput(BeanMetaData.class);
    }
 
@@ -71,8 +66,7 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
       PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, persistenceDeployment, explicitEntityClasses, metaData, ear, jar, isScoped, deploymentUnit);
       
       String name = "ToDo";
-      AbstractBeanMetaData beanMetaData = new AbstractBeanMetaData(name, PersistenceUnitDeployment.class.getName());
-      BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
+      BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(name, PersistenceUnitDeployment.class.getName());
       builder.setConstructorValue(pu);
       
       unit.addAttachment(BeanMetaData.class, builder.getBeanMetaData());
