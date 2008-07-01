@@ -21,36 +21,67 @@
  */
 package org.jboss.jpa.deployers;
 
-import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.helpers.AbstractSimpleRealDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.jpa.deployment.PersistenceDeployment;
+import java.util.Collections;
+import java.util.List;
+
+import org.jboss.deployers.spi.deployer.helpers.AbstractComponentDeployer;
+import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceMetaData;
+import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class PersistenceDeployer extends AbstractSimpleRealDeployer<PersistenceMetaData>
+public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMetaData, PersistenceUnitMetaData>
 {
+   private static final Logger log = Logger.getLogger(PersistenceDeployer.class);
+   
    public PersistenceDeployer()
    {
-      super(PersistenceMetaData.class);
-      addOutput(BeanMetaData.class);
+      setComponentVisitor(new PersistenceUnitDeploymentVisitor());
+      setDeploymentVisitor(new PersistenceDeploymentVisitor());
    }
 
-   @Override
-   public void deploy(DeploymentUnit unit, PersistenceMetaData deployment) throws DeploymentException
+   private static class PersistenceDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceMetaData, PersistenceUnitMetaData>
    {
-      PersistenceDeployment bean = new PersistenceDeployment((VFSDeploymentUnit) unit, null, deployment);
-      BeanMetaDataBuilder bmdb = BeanMetaDataBuilder.createBuilder("PersistenceDeployment", PersistenceDeployment.class.getName());
-      bmdb.setConstructorValue(bean);
-//      AbstractBeanMetaData bmd = new AbstractBeanMetaData("PersistenceDeployment", PersistenceDeployment.class.getName());
-//      AbstractConstructorMetaData constructor = new AbstractConstructorMetaData();
-//      constructor.setValueObject(bean);
-      unit.addAttachment(BeanMetaData.class, bmdb.getBeanMetaData());
+      public Class<PersistenceMetaData> getVisitorType()
+      {
+         return PersistenceMetaData.class;
+      }
+
+      @Override
+      protected List<PersistenceUnitMetaData> getComponents(PersistenceMetaData deployment)
+      {
+         return deployment.getPersistenceUnits();
+      }
+
+      @Override
+      protected String getName(PersistenceUnitMetaData component)
+      {
+         // TODO: fix me
+         return component.getName();
+      }
+   }
+   
+   private static class PersistenceUnitDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceUnitMetaData, PersistenceUnitMetaData>
+   {
+      public Class<PersistenceUnitMetaData> getVisitorType()
+      {
+         return PersistenceUnitMetaData.class;
+      }
+
+      @Override
+      protected List<PersistenceUnitMetaData> getComponents(PersistenceUnitMetaData deployment)
+      {
+         return Collections.singletonList(deployment);
+      }
+
+      @Override
+      protected String getName(PersistenceUnitMetaData component)
+      {
+         // TODO: fix me
+         return component.getName();
+      }
    }
 }

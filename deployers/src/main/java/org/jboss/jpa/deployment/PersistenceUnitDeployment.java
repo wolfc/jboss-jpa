@@ -65,14 +65,14 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    protected PersistenceDeployment deployment;
    protected boolean scoped;
 
-   public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String ear, String jar, boolean isScoped)
+   public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String ear, String jar, boolean isScoped, VFSDeploymentUnit deploymentUnit)
    {
       //super(new SimpleJavaEEModule((deployment.getEar() != null ? deployment.getEar().getShortName() : null), deployment.getDeploymentUnit().getShortName()));
       
       this.scoped = isScoped;
       this.deployment = deployment;
       this.initialContext = initialContext;
-      this.di = deployment.getDeploymentUnit();
+      this.di = deploymentUnit;
       this.explicitEntityClasses = explicitEntityClasses;
       this.metaData = metadata;
       kernelName = "persistence.units:";

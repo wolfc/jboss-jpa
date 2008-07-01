@@ -216,7 +216,7 @@ public class PersistenceDeployment //extends ServiceMBeanSupport
 //            cache_prefix = SecondLevelCacheUtil.createCacheRegionPrefix(earShortName, jarName, metaData.getName());
 //            properties.put(SecondLevelCacheUtil.HIBERNATE_CACHE_REGION_PREFIX, cache_prefix);
 //         }
-         PersistenceUnitDeployment deployment = new PersistenceUnitDeployment(initialContext, this, explicitEntityClasses, metaData, earName, unit.getSimpleName(), isScoped);
+         PersistenceUnitDeployment deployment = new PersistenceUnitDeployment(initialContext, this, explicitEntityClasses, metaData, earName, unit.getSimpleName(), isScoped, getDeploymentUnit());
          PersistenceUnitRegistry.register(deployment);
          persistenceUnitDeployments.add(deployment);
       }

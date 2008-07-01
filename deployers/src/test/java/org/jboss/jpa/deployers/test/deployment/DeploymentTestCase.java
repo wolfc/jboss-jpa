@@ -54,5 +54,10 @@ public class DeploymentTestCase
       VirtualFile file = VFS.getRoot(url);
       VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
       delegate.getMainDeployer().deploy(deployment);
+      delegate.getMainDeployer().checkComplete(deployment);
+      
+      // TODO:
+      
+      delegate.getMainDeployer().undeploy(deployment);
    }
 }

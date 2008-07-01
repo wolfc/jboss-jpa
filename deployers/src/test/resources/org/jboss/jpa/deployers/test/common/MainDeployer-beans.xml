@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
-
+   <bean name="SimpleClassLoaderDeployer" class="org.jboss.jpa.deployers.test.common.SimpleClassLoaderDeployer"/>
+   
    <!-- The MainDeployer -->
    <bean name="MainDeployer" class="org.jboss.deployers.plugins.main.MainDeployerImpl">
       <property name="structuralDeployers"><inject bean="StructuralDeployers"/></property>

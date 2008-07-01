@@ -3,4 +3,5 @@
    <bean name="PersistenceParsingDeployer" class="org.jboss.jpa.deployers.PersistenceParsingDeployer"/>
 
    <bean name="PersistenceDeployer" class="org.jboss.jpa.deployers.PersistenceDeployer"/>
+   <bean name="PersistenceUnitDeployer" class="org.jboss.jpa.deployers.PersistenceUnitDeployer"/>
 </deployment>
