@@ -41,9 +41,29 @@ public class MainDeployerTestDelegate extends MicrocontainerTestDelegate
       super(clazz);
    }
    
+   public KernelDeployment deploy(String resource) throws Exception
+   {
+      URL url = clazz.getResource(resource);
+      if(url == null)
+         throw new IllegalArgumentException("Can't find resource '" + resource + "'");
+      try
+      {
+         return deploy(url);
+      }
+      finally
+      {
+         validate();
+      }
+   }
+   
    public KernelDeployment deploy(URL url) throws Exception
    {
       return super.deploy(url);
+   }
+   
+   public <T> T getBean(Object name, Class<T> expectedType)
+   {
+      return getBean(name, ControllerState.INSTALLED, expectedType);
    }
    
    public MainDeployer getMainDeployer()

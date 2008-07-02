@@ -3,5 +3,14 @@
    <bean name="PersistenceParsingDeployer" class="org.jboss.jpa.deployers.PersistenceParsingDeployer"/>
 
    <bean name="PersistenceDeployer" class="org.jboss.jpa.deployers.PersistenceDeployer"/>
-   <bean name="PersistenceUnitDeployer" class="org.jboss.jpa.deployers.PersistenceUnitDeployer"/>
+   <bean name="PersistenceUnitDeployer" class="org.jboss.jpa.deployers.PersistenceUnitDeployer">
+      <property name="defaultPersistenceProperties">
+         <map keyClass="java.lang.String" valueClass="java.lang.String">
+            <entry>
+               <key>hibernate.transaction.manager_lookup_class</key>
+               <value>org.hibernate.transaction.JBossTransactionManagerLookup</value>
+            </entry>
+         </map>
+      </property>
+   </bean>
 </deployment>

@@ -64,8 +64,9 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    protected String kernelName;
    protected PersistenceDeployment deployment;
    protected boolean scoped;
+   private Properties defaultPersistenceProperties;
 
-   public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String ear, String jar, boolean isScoped, VFSDeploymentUnit deploymentUnit)
+   public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String ear, String jar, boolean isScoped, VFSDeploymentUnit deploymentUnit, Properties defaultPersistenceProperties)
    {
       //super(new SimpleJavaEEModule((deployment.getEar() != null ? deployment.getEar().getShortName() : null), deployment.getDeploymentUnit().getShortName()));
       
@@ -75,6 +76,8 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       this.di = deploymentUnit;
       this.explicitEntityClasses = explicitEntityClasses;
       this.metaData = metadata;
+      this.defaultPersistenceProperties = defaultPersistenceProperties;
+      
       kernelName = "persistence.units:";
       String name = getEntityManagerName();
       if (name == null || name.length() == 0)
@@ -231,8 +234,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       log.info("Starting persistence unit " + kernelName);
       
       Properties props = new Properties();
-      // FIXME: reinstate
-//      props.putAll(di.getDefaultPersistenceProperties());
+      props.putAll(defaultPersistenceProperties);
       props.put(HibernatePersistence.JACC_CONTEXT_ID, getJaccContextId());
 
       PersistenceUnitInfoImpl pi = new PersistenceUnitInfoImpl();

@@ -44,6 +44,7 @@ import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
  * @author adrian@jboss.org
  * @version $Revision$
  */
+@Deprecated
 public class PersistenceDeployment //extends ServiceMBeanSupport
 //  implements JavaEEModule, Ejb3DeploymentMBean
 {
@@ -216,7 +217,7 @@ public class PersistenceDeployment //extends ServiceMBeanSupport
 //            cache_prefix = SecondLevelCacheUtil.createCacheRegionPrefix(earShortName, jarName, metaData.getName());
 //            properties.put(SecondLevelCacheUtil.HIBERNATE_CACHE_REGION_PREFIX, cache_prefix);
 //         }
-         PersistenceUnitDeployment deployment = new PersistenceUnitDeployment(initialContext, this, explicitEntityClasses, metaData, earName, unit.getSimpleName(), isScoped, getDeploymentUnit());
+         PersistenceUnitDeployment deployment = new PersistenceUnitDeployment(initialContext, this, explicitEntityClasses, metaData, earName, unit.getSimpleName(), isScoped, getDeploymentUnit(), null);
          PersistenceUnitRegistry.register(deployment);
          persistenceUnitDeployments.add(deployment);
       }

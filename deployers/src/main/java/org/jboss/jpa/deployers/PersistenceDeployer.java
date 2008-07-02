@@ -39,7 +39,7 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
    
    public PersistenceDeployer()
    {
-      setComponentVisitor(new PersistenceUnitDeploymentVisitor());
+      //setComponentVisitor(new PersistenceUnitDeploymentVisitor());
       setDeploymentVisitor(new PersistenceDeploymentVisitor());
    }
 

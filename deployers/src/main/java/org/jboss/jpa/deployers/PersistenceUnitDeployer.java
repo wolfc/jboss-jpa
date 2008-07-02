@@ -23,9 +23,12 @@ package org.jboss.jpa.deployers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
+import org.jboss.beans.metadata.api.annotations.MapValue;
 import org.jboss.beans.metadata.plugins.AbstractBeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
@@ -46,6 +49,8 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
 {
    private static final Logger log = Logger.getLogger(PersistenceUnitDeployer.class);
    
+   private Properties defaultPersistenceProperties;
+   
    public PersistenceUnitDeployer()
    {
       super(PersistenceUnitMetaData.class);
@@ -61,20 +66,34 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
    {
       log.debug("deploy " + metaData);
       
-      InitialContext initialContext = null;
-      PersistenceDeployment persistenceDeployment = null;
-      List<String> explicitEntityClasses = new ArrayList<String>();
-      String ear = null;
-      String jar = null;
-      boolean isScoped = false;
-      VFSDeploymentUnit deploymentUnit = (VFSDeploymentUnit) unit.getParent();
-      PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, persistenceDeployment, explicitEntityClasses, metaData, ear, jar, isScoped, deploymentUnit);
-      
-      String name = "ToDo";
-      AbstractBeanMetaData beanMetaData = new AbstractBeanMetaData(name, PersistenceUnitDeployment.class.getName());
-      BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
-      builder.setConstructorValue(pu);
-      
-      unit.addAttachment(BeanMetaData.class, builder.getBeanMetaData());
+      try
+      {
+         InitialContext initialContext = new InitialContext();
+         PersistenceDeployment persistenceDeployment = null;
+         List<String> explicitEntityClasses = new ArrayList<String>();
+         String ear = null;
+         String jar = null;
+         boolean isScoped = false;
+         VFSDeploymentUnit deploymentUnit = (VFSDeploymentUnit) unit.getParent();
+         PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, persistenceDeployment, explicitEntityClasses, metaData, ear, jar, isScoped, deploymentUnit, defaultPersistenceProperties);
+         
+         // TODO: fix me, must match the component name in PersistenceDeployer
+         String name = metaData.getName();
+         AbstractBeanMetaData beanMetaData = new AbstractBeanMetaData(name, PersistenceUnitDeployment.class.getName());
+         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
+         builder.setConstructorValue(pu);
+         
+         unit.addAttachment(BeanMetaData.class, builder.getBeanMetaData());
+      }
+      catch(NamingException e)
+      {
+         throw new DeploymentException(e);
+      }
+   }
+   
+   @MapValue(keyClass=String.class, value={}, valueClass=String.class)
+   public void setDefaultPersistenceProperties(Properties p)
+   {
+      this.defaultPersistenceProperties = p;
    }
 }

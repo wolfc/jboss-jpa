@@ -21,11 +21,14 @@
  */
 package org.jboss.jpa.deployers.test.deployment;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.net.URL;
 
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
 import org.jboss.jpa.deployers.test.common.MainDeployerTestDelegate;
+import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
 import org.junit.BeforeClass;
@@ -44,6 +47,10 @@ public class DeploymentTestCase
    {
       delegate = new MainDeployerTestDelegate(DeploymentTestCase.class);
       delegate.setUp();
+      
+      delegate.deploy("/org/jboss/jpa/deployers/test/common/jndi-beans.xml");
+      delegate.deploy("/org/jboss/jpa/deployers/test/common/jbossts-beans.xml");
+      delegate.deploy("derby-beans.xml");
    }
    
    @Test
@@ -54,9 +61,12 @@ public class DeploymentTestCase
       VirtualFile file = VFS.getRoot(url);
       VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
       delegate.getMainDeployer().deploy(deployment);
-      delegate.getMainDeployer().checkComplete(deployment);
+      //delegate.getMainDeployer().checkComplete(deployment);
       
-      // TODO:
+      // TODO: this name should be persistence.units:jar=pu,unitName=dummy
+      String name = "dummy";
+      PersistenceUnit pu = delegate.getBean(name, PersistenceUnit.class);
+      assertNotNull(pu);
       
       delegate.getMainDeployer().undeploy(deployment);
    }
