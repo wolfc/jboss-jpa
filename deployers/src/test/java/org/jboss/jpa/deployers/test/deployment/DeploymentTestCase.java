@@ -31,6 +31,7 @@ import org.jboss.jpa.deployers.test.common.MainDeployerTestDelegate;
 import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -41,6 +42,12 @@ import org.junit.Test;
 public class DeploymentTestCase
 {
    private static MainDeployerTestDelegate delegate;
+   
+   @AfterClass
+   public static void afterClass() throws Exception
+   {
+      delegate.tearDown();
+   }
    
    @BeforeClass
    public static void beforeClass() throws Exception
