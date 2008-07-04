@@ -28,6 +28,7 @@ import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.beans.metadata.api.annotations.MapValue;
 import org.jboss.beans.metadata.plugins.AbstractBeanMetaData;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -50,6 +51,8 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
    private static final Logger log = Logger.getLogger(PersistenceUnitDeployer.class);
    
    private Properties defaultPersistenceProperties;
+
+   private DataSourceDependencyResolver dataSourceDependencyResolver;
    
    public PersistenceUnitDeployer()
    {
@@ -59,6 +62,33 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
       setComponentsOnly(true);
       
       addOutput(BeanMetaData.class);
+   }
+
+   private void addDependencies(BeanMetaDataBuilder builder, PersistenceUnitMetaData metaData)
+   {
+      Properties props = defaultPersistenceProperties;
+      if (!props.containsKey("jboss.no.implicit.datasource.dependency"))
+      {
+         if (metaData.getJtaDataSource() != null)
+         {
+            String ds = metaData.getJtaDataSource();
+            builder.addDependency(dataSourceDependencyResolver.resolveDataSourceSupplier(ds));
+         }
+         if (metaData.getNonJtaDataSource() != null)
+         {
+            String ds = metaData.getNonJtaDataSource();
+            builder.addDependency(dataSourceDependencyResolver.resolveDataSourceSupplier(ds));
+         }
+      }
+      for (Object prop : props.keySet())
+      {
+         String property = (String) prop;
+         if (property.startsWith("jboss.depends"))
+         {
+            builder.addDependency(props.get(property));
+         }
+      }
+
    }
 
    @Override
@@ -82,6 +112,7 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
          AbstractBeanMetaData beanMetaData = new AbstractBeanMetaData(name, PersistenceUnitDeployment.class.getName());
          BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
          builder.setConstructorValue(pu);
+         addDependencies(builder, metaData);
          
          unit.addAttachment(BeanMetaData.class, builder.getBeanMetaData());
       }
@@ -89,6 +120,12 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
       {
          throw new DeploymentException(e);
       }
+   }
+   
+   @Inject
+   public void setDataSourceDependencyResolver(DataSourceDependencyResolver resolver)
+   {
+      this.dataSourceDependencyResolver = resolver;
    }
    
    @MapValue(keyClass=String.class, value={}, valueClass=String.class)
