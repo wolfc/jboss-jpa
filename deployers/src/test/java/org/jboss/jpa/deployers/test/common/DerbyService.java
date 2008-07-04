@@ -26,6 +26,7 @@ import java.sql.Connection;
 import javax.naming.InitialContext;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
+import org.jboss.logging.Logger;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
@@ -33,6 +34,8 @@ import org.apache.derby.jdbc.EmbeddedDataSource;
  */
 public class DerbyService
 {
+   private static final Logger log = Logger.getLogger(DerbyService.class);
+   
    private String className = "org.apache.derby.jdbc.EmbeddedDataSource";
    private String databaseName = "./target/derby.db";
    private boolean createDatabase = true;
@@ -43,6 +46,8 @@ public class DerbyService
    
    public void create() throws Exception
    {
+      log.info("Creating derby service");
+      
       System.setProperty("derby.stream.error.file", "target/derby.log");
       
       Class<? extends EmbeddedDataSource> cls = (Class<? extends EmbeddedDataSource>) Class.forName(className);
@@ -56,6 +61,8 @@ public class DerbyService
    
    public void destroy() throws Exception
    {
+      log.info("Destroying derby service");
+      
       ctx.close();
       ctx = null;
       ds = null;
@@ -63,6 +70,8 @@ public class DerbyService
    
    public void start() throws Exception
    {
+      log.info("Starting derby service");
+      
       // Make sure that database is created before we go on.
       Connection con = ds.getConnection();
       con.close();
@@ -72,6 +81,8 @@ public class DerbyService
    
    public void stop() throws Exception
    {
+      log.info("Stopping derby service");
+      
       ctx.unbind(jndiName);
    }
 }
