@@ -21,16 +21,36 @@
  */
 package org.jboss.jpa.deployers.test.common;
 
-import org.jboss.jpa.resolvers.DataSourceDependencyResolver;
+import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.jpa.javaee.JavaEEModuleInformer;
+import org.jboss.logging.Logger;
+import org.jboss.metadata.ear.jboss.JBossAppMetaData;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class SimpleDataSourceDependencyResolver implements DataSourceDependencyResolver
+public class SimpleJavaEEModuleInformer implements JavaEEModuleInformer
 {
-   public String resolveDataSourceSupplier(String jndiName)
+   private static final Logger log = Logger.getLogger(SimpleJavaEEModuleInformer.class);
+   
+   public String getApplicationName(DeploymentUnit deploymentUnit)
    {
-      return "DerbyService";
+      DeploymentUnit application = deploymentUnit.getTopLevel();
+//      if(application == null)
+//         return null;
+      if(!application.isAttachmentPresent(JBossAppMetaData.class))
+         return null;
+      return application.getSimpleName();
+   }
+
+   public String getModulePath(DeploymentUnit deploymentUnit)
+   {
+      return deploymentUnit.getRelativePath();
+   }
+
+   public ModuleType getModuleType(DeploymentUnit deploymentUnit)
+   {
+      throw new RuntimeException("NYI");
    }
 }

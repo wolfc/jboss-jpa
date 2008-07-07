@@ -39,6 +39,8 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.jpa.deployment.PersistenceDeployment;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
+import org.jboss.jpa.resolvers.DataSourceDependencyResolver;
+import org.jboss.jpa.resolvers.PersistenceUnitDependencyResolver;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 
@@ -53,6 +55,8 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
    private Properties defaultPersistenceProperties;
 
    private DataSourceDependencyResolver dataSourceDependencyResolver;
+
+   private PersistenceUnitDependencyResolver persistenceUnitDependencyResolver;
    
    public PersistenceUnitDeployer()
    {
@@ -98,17 +102,14 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
       
       try
       {
+         String name = persistenceUnitDependencyResolver.createBeanName(unit, metaData.getName());
+         
          InitialContext initialContext = new InitialContext();
          PersistenceDeployment persistenceDeployment = null;
          List<String> explicitEntityClasses = new ArrayList<String>();
-         String ear = null;
-         String jar = null;
-         boolean isScoped = false;
          VFSDeploymentUnit deploymentUnit = (VFSDeploymentUnit) unit.getParent();
-         PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, persistenceDeployment, explicitEntityClasses, metaData, ear, jar, isScoped, deploymentUnit, defaultPersistenceProperties);
+         PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, persistenceDeployment, explicitEntityClasses, metaData, name, deploymentUnit, defaultPersistenceProperties);
          
-         // TODO: fix me, must match the component name in PersistenceDeployer
-         String name = metaData.getName();
          AbstractBeanMetaData beanMetaData = new AbstractBeanMetaData(name, PersistenceUnitDeployment.class.getName());
          BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
          builder.setConstructorValue(pu);
@@ -132,5 +133,11 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
    public void setDefaultPersistenceProperties(Properties p)
    {
       this.defaultPersistenceProperties = p;
+   }
+   
+   @Inject
+   public void setPersistenceUnitDependencyResolver(PersistenceUnitDependencyResolver resolver)
+   {
+      this.persistenceUnitDependencyResolver = resolver;
    }
 }

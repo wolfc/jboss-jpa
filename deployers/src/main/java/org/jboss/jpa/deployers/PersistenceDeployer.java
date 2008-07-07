@@ -24,7 +24,10 @@ package org.jboss.jpa.deployers;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.deployers.spi.deployer.helpers.AbstractComponentDeployer;
+import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.jpa.resolvers.PersistenceUnitDependencyResolver;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
@@ -37,13 +40,15 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
 {
    private static final Logger log = Logger.getLogger(PersistenceDeployer.class);
    
+   private PersistenceUnitDependencyResolver persistenceUnitDependencyResolver;
+   
    public PersistenceDeployer()
    {
       //setComponentVisitor(new PersistenceUnitDeploymentVisitor());
       setDeploymentVisitor(new PersistenceDeploymentVisitor());
    }
 
-   private static class PersistenceDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceMetaData, PersistenceUnitMetaData>
+   private class PersistenceDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceMetaData, PersistenceUnitMetaData>
    {
       public Class<PersistenceMetaData> getVisitorType()
       {
@@ -57,14 +62,13 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
       }
 
       @Override
-      protected String getName(PersistenceUnitMetaData component)
+      protected String getName(DeploymentUnit unit, PersistenceUnitMetaData component)
       {
-         // TODO: fix me
-         return component.getName();
+         return persistenceUnitDependencyResolver.createBeanName(unit, component.getName());
       }
    }
    
-   private static class PersistenceUnitDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceUnitMetaData, PersistenceUnitMetaData>
+   private class PersistenceUnitDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceUnitMetaData, PersistenceUnitMetaData>
    {
       public Class<PersistenceUnitMetaData> getVisitorType()
       {
@@ -78,10 +82,15 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
       }
 
       @Override
-      protected String getName(PersistenceUnitMetaData component)
+      protected String getName(DeploymentUnit unit, PersistenceUnitMetaData component)
       {
-         // TODO: fix me
-         return component.getName();
+         return persistenceUnitDependencyResolver.createBeanName(unit, component.getName());
       }
+   }
+   
+   @Inject
+   public void setPersistenceUnitDependencyResolver(PersistenceUnitDependencyResolver resolver)
+   {
+      this.persistenceUnitDependencyResolver = resolver;
    }
 }

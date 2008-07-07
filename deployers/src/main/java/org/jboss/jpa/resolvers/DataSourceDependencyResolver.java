@@ -19,18 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jpa.deployers.test.common;
-
-import org.jboss.jpa.resolvers.DataSourceDependencyResolver;
+package org.jboss.jpa.resolvers;
 
 /**
+ * Find the bean name that supplies the given DataSource. Not that
+ * this bean might not be available yet.
+ * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class SimpleDataSourceDependencyResolver implements DataSourceDependencyResolver
+public interface DataSourceDependencyResolver
 {
-   public String resolveDataSourceSupplier(String jndiName)
-   {
-      return "DerbyService";
-   }
+   /**
+    * @param jndiName the jndiName of the DataSource
+    * @return the bean name of the DataSource
+    */
+   String resolveDataSourceSupplier(String jndiName);
 }

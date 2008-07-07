@@ -70,8 +70,7 @@ public class DeploymentTestCase
       delegate.getMainDeployer().deploy(deployment);
       //delegate.getMainDeployer().checkComplete(deployment);
       
-      // TODO: this name should be persistence.units:jar=pu,unitName=dummy
-      String name = "dummy";
+      String name = "persistence.unit:unitName=#dummy";
       PersistenceUnit pu = delegate.getBean(name, PersistenceUnit.class);
       assertNotNull(pu);
       

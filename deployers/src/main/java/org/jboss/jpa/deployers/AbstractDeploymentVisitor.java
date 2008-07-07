@@ -45,7 +45,7 @@ public abstract class AbstractDeploymentVisitor<T, C> implements DeploymentVisit
     */
    protected void addComponent(DeploymentUnit unit, C componentMD)
    {
-      String name = getName(componentMD);
+      String name = getName(unit, componentMD);
       DeploymentUnit component = unit.addComponent(name);
       // TODO: determine proper component meta data class
       component.addAttachment(componentMD.getClass().getName(), componentMD);
@@ -78,7 +78,7 @@ public abstract class AbstractDeploymentVisitor<T, C> implements DeploymentVisit
 
    protected abstract List<C> getComponents(T deployment);
    
-   protected abstract String getName(C component);
+   protected abstract String getName(DeploymentUnit unit, C component);
    
    /**
     * Remove bean component.
@@ -89,7 +89,7 @@ public abstract class AbstractDeploymentVisitor<T, C> implements DeploymentVisit
 
    protected void removeComponent(DeploymentUnit unit, C component)
    {
-      String name = getName(component);
+      String name = getName(unit, component);
       unit.removeComponent(name);
    }
 

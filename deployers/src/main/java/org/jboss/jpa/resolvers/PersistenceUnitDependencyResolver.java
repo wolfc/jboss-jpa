@@ -19,20 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jpa.deployers;
+package org.jboss.jpa.resolvers;
+
+import org.jboss.deployers.structure.spi.DeploymentUnit;
 
 /**
- * Find the bean name that supplies the given DataSource. Not that
- * this bean might not be available yet.
+ * Based on the available meta data resolve persistence unit references.
  * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public interface DataSourceDependencyResolver
+public interface PersistenceUnitDependencyResolver
 {
    /**
-    * @param jndiName the jndiName of the DataSource
-    * @return the bean name of the DataSource
+    * Create a bean name for a persistence unit (deployment).
+    * 
+    * @param deploymentUnit the deployment unit in which the persistence unit is defined
+    * @param persistenceUnitName the name of the persistence unit
+    * @return the bean name
     */
-   String resolveDataSourceSupplier(String jndiName);
+   String createBeanName(DeploymentUnit deploymentUnit, String persistenceUnitName);
+   
+   /**
+    * @param deploymentUnit the deployment unit that has a persistence unit reference
+    * @param persistenceUnitName the (relative) name of a persistence unit
+    * @return the bean name of the persistence unit
+    */
+   String resolverPersistenceUnitSupplier(DeploymentUnit deploymentUnit, String persistenceUnitName);
 }

@@ -63,14 +63,12 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    protected PersistenceUnitMetaData metaData;
    protected String kernelName;
    protected PersistenceDeployment deployment;
-   protected boolean scoped;
    private Properties defaultPersistenceProperties;
 
-   public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String ear, String jar, boolean isScoped, VFSDeploymentUnit deploymentUnit, Properties defaultPersistenceProperties)
+   public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String kernelName, VFSDeploymentUnit deploymentUnit, Properties defaultPersistenceProperties)
    {
       //super(new SimpleJavaEEModule((deployment.getEar() != null ? deployment.getEar().getShortName() : null), deployment.getDeploymentUnit().getShortName()));
       
-      this.scoped = isScoped;
       this.deployment = deployment;
       this.initialContext = initialContext;
       this.di = deploymentUnit;
@@ -78,24 +76,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       this.metaData = metadata;
       this.defaultPersistenceProperties = defaultPersistenceProperties;
       
-      kernelName = "persistence.units:";
-      String name = getEntityManagerName();
-      if (name == null || name.length() == 0)
-         throw new RuntimeException("Null string is not allowed for a persistence unit name.  Fix your persistence.xml file");
-      
-      if (ear != null)
-      {
-         kernelName += "ear=" + ear;
-         if (!ear.endsWith(".ear")) kernelName += ".ear";
-         kernelName += ",";
-      }
-      if (isScoped)
-      {
-         kernelName += "jar=" + jar;
-         if (!jar.endsWith(".jar")) kernelName += ".jar";
-         kernelName += ",";
-      }
-      kernelName += "unitName=" + name;
+      this.kernelName = kernelName;
    }
 
    public static String getDefaultKernelName(String unitName)
@@ -108,11 +89,6 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
          return "persistence.units:jar=" + relativePath + "," + "unitName=" + name;
       }
       return "persistence.units:unitName=" + unitName;
-   }
-
-   public boolean isScoped()
-   {
-      return scoped;
    }
 
    public PersistenceDeployment getDeployment()

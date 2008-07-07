@@ -2,6 +2,10 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
    <bean name="DataSourceDependencyResolver" class="org.jboss.jpa.deployers.test.common.SimpleDataSourceDependencyResolver"/>
    
+   <bean name="JavaEEModuleInformer" class="org.jboss.jpa.deployers.test.common.SimpleJavaEEModuleInformer"/>
+   
+   <bean name="PersistenceUnitDependencyResolver" class="org.jboss.jpa.resolvers.DefaultPersistenceUnitDependencyResolver"/>
+   
    <bean name="PersistenceParsingDeployer" class="org.jboss.jpa.deployers.PersistenceParsingDeployer"/>
 
    <bean name="PersistenceDeployer" class="org.jboss.jpa.deployers.PersistenceDeployer"/>
