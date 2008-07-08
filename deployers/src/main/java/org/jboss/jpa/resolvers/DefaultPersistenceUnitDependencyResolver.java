@@ -24,6 +24,8 @@ package org.jboss.jpa.resolvers;
 import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.jpa.javaee.JavaEEModuleInformer;
+import org.jboss.metadata.jpa.spec.PersistenceMetaData;
+import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
@@ -45,6 +47,37 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
       return "persistence.unit:unitName=" + unitName;
    }
 
+   private String findWithinApplication(DeploymentUnit unit, String persistenceUnitName)
+   {
+      String name = findWithinModule(unit, persistenceUnitName, false);
+      if(name != null)
+         return name;
+      
+      for(DeploymentUnit child : unit.getChildren())
+      {
+         name = findWithinApplication(child, persistenceUnitName);
+         if(name != null)
+            return name;
+      }
+      return null;
+   }
+   
+   private String findWithinModule(DeploymentUnit unit, String persistenceUnitName, boolean allowScoped)
+   {
+      if(!allowScoped && isScoped(unit))
+         return null;
+      
+      PersistenceMetaData persistenceMetaData = unit.getAttachment(PersistenceMetaData.class);
+      if(persistenceMetaData == null)
+         return null;
+      for(PersistenceUnitMetaData persistenceUnit : persistenceMetaData.getPersistenceUnits())
+      {
+         if(persistenceUnit.getName().equals(persistenceUnitName))
+            return createBeanName(unit, persistenceUnitName);
+      }
+      return null;
+   }
+   
    private static DeploymentUnit getDeploymentUnit(DeploymentUnit current, String path)
    {
       if(path.startsWith("/"))
@@ -67,7 +100,22 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
       throw new IllegalArgumentException("Can't find a deployment unit named " + name + " at " + current);
    }
    
-   public String resolverPersistenceUnitSupplier(DeploymentUnit deploymentUnit, String persistenceUnitName)
+   /*
+    * EJB3 JPA 6.2.2: Persistence Unit Scope
+    */
+   private boolean isScoped(DeploymentUnit unit)
+   {
+      JavaEEModuleInformer.ModuleType type = javaEEModuleInformer.getModuleType(unit);
+      if(type == JavaEEModuleInformer.ModuleType.APP_CLIENT)
+         return true;
+      if(type == JavaEEModuleInformer.ModuleType.EJB)
+         return true;
+      if(type == JavaEEModuleInformer.ModuleType.WEB)
+         return true;
+      return false;
+   }
+   
+   public String resolvePersistenceUnitSupplier(DeploymentUnit deploymentUnit, String persistenceUnitName)
    {
       int i = persistenceUnitName.indexOf('#');
       if(i != -1)
@@ -75,11 +123,17 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
          String path = persistenceUnitName.substring(0, i);
          String unitName = persistenceUnitName.substring(i + 1);
          DeploymentUnit targetDeploymentUnit = getDeploymentUnit(deploymentUnit, path);
+         // TODO: verify the existence of PersistenceUnitMetaData?
          return createBeanName(targetDeploymentUnit, unitName);
       }
       else
       {
-         throw new RuntimeException("NYI");
+         String name = findWithinModule(deploymentUnit, persistenceUnitName, true);
+         if(name == null)
+            name = findWithinApplication(deploymentUnit.getTopLevel(), persistenceUnitName);
+         if(name == null)
+            throw new IllegalArgumentException("Can't find a persistence unit named '" + persistenceUnitName + "' in " + deploymentUnit);
+         return name;
       }
    }
    
