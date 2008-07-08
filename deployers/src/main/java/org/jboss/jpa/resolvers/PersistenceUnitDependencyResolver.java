@@ -45,5 +45,5 @@ public interface PersistenceUnitDependencyResolver
     * @param persistenceUnitName the (relative) name of a persistence unit
     * @return the bean name of the persistence unit
     */
-   String resolverPersistenceUnitSupplier(DeploymentUnit deploymentUnit, String persistenceUnitName);
+   String resolvePersistenceUnitSupplier(DeploymentUnit deploymentUnit, String persistenceUnitName);
 }
