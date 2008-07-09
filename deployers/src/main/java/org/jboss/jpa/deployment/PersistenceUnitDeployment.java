@@ -21,6 +21,7 @@
  */
 package org.jboss.jpa.deployment;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -133,6 +134,26 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       return getKernelName();
    }
 
+   /**
+    * Find the persistence unit root, which can be the root of a jar
+    * or WEB-INF/classes of a war.
+    * @return the persistence unit root
+    */
+   protected VirtualFile getPersistenceUnitRoot()
+   {
+      // FIXME: What is the correct way to find the persistence unit root?
+      try
+      {
+         VirtualFile metaData = di.getMetaDataFile("persistence.xml");
+         assert metaData != null : "Can't find persistence.xml in " + di;
+         return metaData.getParent().getParent();
+      }
+      catch(IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+   
    public EntityManagerFactory getContainerEntityManagerFactory()
    {
       return getManagedFactory().getEntityManagerFactory();
@@ -238,7 +259,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       pi.setPersistenceUnitName(metaData.getName());
       pi.setMappingFileNames(safeList(metaData.getMappingFiles()));
       pi.setExcludeUnlistedClasses(metaData.isExcludeUnlistedClasses());
-      VirtualFile root = di.getRoot();
+      VirtualFile root = getPersistenceUnitRoot();
       log.debug("Persistence root: " + root);
       // TODO - update this with VFSUtils helper method
       // hack the JPA url
