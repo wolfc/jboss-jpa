@@ -22,6 +22,7 @@
 package org.jboss.jpa.deployers.test.deployment;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.net.URL;
 
@@ -29,6 +30,7 @@ import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
 import org.jboss.jpa.deployers.test.common.MainDeployerTestDelegate;
 import org.jboss.jpa.spi.PersistenceUnit;
+import org.jboss.jpa.spi.PersistenceUnitRegistry;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
 import org.junit.AfterClass;
@@ -74,6 +76,10 @@ public class DeploymentTestCase
       PersistenceUnit pu = delegate.getBean(name, PersistenceUnit.class);
       assertNotNull(pu);
       
+      assertNotNull("Persistence unit not found in PersistenceUnitRegistry", PersistenceUnitRegistry.getPersistenceUnit(name));
+      
       delegate.getMainDeployer().undeploy(deployment);
+      
+      assertNull("Persistence unit still found in PersistenceUnitRegistry", PersistenceUnitRegistry.getPersistenceUnit(name));
    }
 }

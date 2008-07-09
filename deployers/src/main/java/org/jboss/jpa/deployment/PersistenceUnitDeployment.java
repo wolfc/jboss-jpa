@@ -38,6 +38,7 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.jpa.spi.PersistenceUnit;
+import org.jboss.jpa.spi.PersistenceUnitRegistry;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.metadata.jpa.spec.TransactionType;
@@ -79,6 +80,17 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       this.kernelName = kernelName;
    }
 
+   public void create()
+   {
+      // To allow for serializable objects to obtain a reference back
+      PersistenceUnitRegistry.register(this);
+   }
+   
+   public void destroy()
+   {
+      PersistenceUnitRegistry.unregister(this);
+   }
+   
    public static String getDefaultKernelName(String unitName)
    {
       int hashIndex = unitName.indexOf('#');
