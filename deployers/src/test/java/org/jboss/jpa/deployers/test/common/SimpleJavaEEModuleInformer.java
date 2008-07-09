@@ -51,6 +51,6 @@ public class SimpleJavaEEModuleInformer implements JavaEEModuleInformer
 
    public ModuleType getModuleType(DeploymentUnit deploymentUnit)
    {
-      throw new RuntimeException("NYI");
+      return ModuleType.JAVA;
    }
 }

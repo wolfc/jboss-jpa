@@ -28,6 +28,8 @@ import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 
 /**
+ * The default implementation of a PersistenceUnitDependencyResolver.
+ * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
@@ -62,6 +64,10 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
       return null;
    }
    
+   /*
+    * When finding the default persistence unit, the first persistence unit encountered is returned.
+    * TODO: Maybe the name of unscoped persistence units should be changed, so only one can be deployed anyway.
+    */
    private String findWithinModule(DeploymentUnit unit, String persistenceUnitName, boolean allowScoped)
    {
       if(!allowScoped && isScoped(unit))
@@ -72,8 +78,8 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
          return null;
       for(PersistenceUnitMetaData persistenceUnit : persistenceMetaData.getPersistenceUnits())
       {
-         if(persistenceUnit.getName().equals(persistenceUnitName))
-            return createBeanName(unit, persistenceUnitName);
+         if(persistenceUnitName == null || persistenceUnit.getName().equals(persistenceUnitName))
+            return createBeanName(unit, persistenceUnit.getName());
       }
       return null;
    }
@@ -117,7 +123,7 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
    
    public String resolvePersistenceUnitSupplier(DeploymentUnit deploymentUnit, String persistenceUnitName)
    {
-      int i = persistenceUnitName.indexOf('#');
+      int i = (persistenceUnitName == null ? -1 : persistenceUnitName.indexOf('#'));
       if(i != -1)
       {
          String path = persistenceUnitName.substring(0, i);

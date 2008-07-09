@@ -42,7 +42,7 @@ public interface PersistenceUnitDependencyResolver
    
    /**
     * @param deploymentUnit the deployment unit that has a persistence unit reference
-    * @param persistenceUnitName the (relative) name of a persistence unit
+    * @param persistenceUnitName the (relative) name of a persistence unit or null for the default persistence unit
     * @return the bean name of the persistence unit
     */
    String resolvePersistenceUnitSupplier(DeploymentUnit deploymentUnit, String persistenceUnitName);
