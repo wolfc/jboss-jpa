@@ -75,5 +75,10 @@ public class DefaultPersistenceUnitDependencyResolverTestCase
       String persistenceUnitName = null;
       String beanName = resolver.resolvePersistenceUnitSupplier(deploymentUnit, persistenceUnitName);
       assertEquals("persistence.unit:unitName=#dummy", beanName);
+      
+      // We want the default persistence unit
+      persistenceUnitName = "";
+      beanName = resolver.resolvePersistenceUnitSupplier(deploymentUnit, persistenceUnitName);
+      assertEquals("persistence.unit:unitName=#dummy", beanName);
    }
 }

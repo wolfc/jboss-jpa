@@ -41,6 +41,11 @@ public interface PersistenceUnitDependencyResolver
    String createBeanName(DeploymentUnit deploymentUnit, String persistenceUnitName);
    
    /**
+    * Get the name of the bean that supplies the specified persistence unit.
+    * 
+    * Note that a null or empty persistence unit name returns the default (first available)
+    * persistence unit.
+    *  
     * @param deploymentUnit the deployment unit that has a persistence unit reference
     * @param persistenceUnitName the (relative) name of a persistence unit or null for the default persistence unit
     * @return the bean name of the persistence unit

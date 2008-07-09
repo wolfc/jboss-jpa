@@ -78,7 +78,7 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
          return null;
       for(PersistenceUnitMetaData persistenceUnit : persistenceMetaData.getPersistenceUnits())
       {
-         if(persistenceUnitName == null || persistenceUnit.getName().equals(persistenceUnitName))
+         if(persistenceUnitName == null || persistenceUnitName.length() == 0 || persistenceUnit.getName().equals(persistenceUnitName))
             return createBeanName(unit, persistenceUnit.getName());
       }
       return null;
