@@ -16,6 +16,10 @@
   <artifactId>jboss-jpa-deployers</artifactId>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA Deployers</name>
+  <description>
+    The JBoss Container Managed JPA Deployers for deploying persistence units.
+    See EJB 3 JPA chapter 6 and 7.
+  </description>
   
   <dependencies>
     <!-- For 'mocking' a TransactionManager we use JBossTS -->

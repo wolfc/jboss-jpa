@@ -18,7 +18,7 @@
   <packaging>pom</packaging>
   <name>JBoss Container Managed JPA Build</name>
   <description>
-    ToDo
+    JBoss CM JPA generic settings.
   </description>
 
   <scm>
