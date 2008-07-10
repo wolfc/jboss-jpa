@@ -30,6 +30,18 @@
   <build>
     <outputDirectory>${jpa.outputDirectory}</outputDirectory>
     <testOutputDirectory>${jpa.testOutputDirectory}</testOutputDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagBase>
+            https://svn.jboss.org/repos/jbossas/projects/jpa/tags
+          </tagBase>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
   <profiles>
