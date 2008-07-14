@@ -187,7 +187,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       {
          try
          {
-            URL url = getDeployment().getDeploymentUnit().getFile("").toURL();
+            URL url = di.getFile("").toURL();
             return new URL(url, jar);
          }
          catch (Exception e1)
