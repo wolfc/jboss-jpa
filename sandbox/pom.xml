@@ -1,0 +1,106 @@
+<!--
+  vi:ts=2:sw=2:expandtab
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss.jpa</groupId>
+    <artifactId>jboss-jpa-build</artifactId>
+    <relativePath>../build/pom.xml</relativePath>
+    <version>0.1.1</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>jboss-jpa-sandbox</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>JBoss Container Managed JPA Sandbox</name>
+  <description>
+    The playground.
+  </description>
+  
+  <dependencies>
+    <!-- For 'mocking' a TransactionManager we use JBossTS -->
+    <dependency>
+      <groupId>jboss.jbossts</groupId>
+      <artifactId>jbossjta</artifactId>
+      <version>4.3.0.GA</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- For 'mocking' a DataSource we use Derby -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.4.1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>3.3.2.GA</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>5.0.0.Beta4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-test</artifactId>
+      <version>1.0.5.GA</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-vfs</artifactId>
+      <version>2.0.0.Beta18</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-vfs-spi</artifactId>
+      <version>2.0.0.Beta18</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.jpa</groupId>
+      <artifactId>jboss-jpa-deployers</artifactId>
+      <version>0.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.metadata</groupId>
+      <artifactId>jboss-metadata</artifactId>
+      <version>1.0.0.Beta26</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.naming</groupId>
+      <artifactId>jnpserver</artifactId>
+      <version>5.0.0.CR1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- For Arjuna / JBoss Transaction -->
+    <dependency>
+      <groupId>apache-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.0.jboss</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>oswego-concurrent</groupId>
+      <artifactId>concurrent</artifactId>
+      <version>1.3.4-jboss-update1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jboss.jbossts</groupId>
+      <artifactId>jbossts-common</artifactId>
+      <version>4.3.0.GA</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
