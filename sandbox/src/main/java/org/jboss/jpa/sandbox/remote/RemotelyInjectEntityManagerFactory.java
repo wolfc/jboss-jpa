@@ -219,8 +219,10 @@ public class RemotelyInjectEntityManagerFactory implements EntityManagerFactory,
       Enumeration<URL> e = Thread.currentThread().getContextClassLoader().getResources("META-INF/persistence.xml");
       while(e.hasMoreElements())
          list.add(e.nextElement());
+//      if(list.size() > 1)
+//         throw new RuntimeException("Can't handle more than 1 persistence unit on the class path, found " + list);
       if(list.size() > 1)
-         throw new RuntimeException("Can't handle more than 1 persistence unit on the class path");
+         log.warn("Found multiple persistence units on the classpath, will use the first one of " + list);
       if(list.size() == 0)
          throw new IllegalStateException("Can't find META-INF/persistence.xml");
       URL url = list.get(0);
