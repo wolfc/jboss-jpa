@@ -52,7 +52,9 @@ public class RemoteTestCase
 
    private static DerbyService derbyService;
    
-   private MarshalledObject<EntityManagerFactory> mo;
+   // not generic in Java 5
+   @SuppressWarnings("unchecked")
+   private MarshalledObject mo;
    
    private InitialContext ctx;
    
@@ -85,6 +87,7 @@ public class RemoteTestCase
       derbyService.start();
    }
 
+   @SuppressWarnings("unchecked")
    @Before
    public void setup() throws IOException
    {
@@ -95,13 +98,13 @@ public class RemoteTestCase
       
       RemotelyInjectEntityManagerFactory factory = new RemotelyInjectEntityManagerFactory(metaData, "dummy");
       
-      mo = new MarshalledObject<EntityManagerFactory>(factory);
+      mo = new MarshalledObject(factory);
    }
    
    @Test
    public void test1() throws IOException, ClassNotFoundException
    {
-      EntityManagerFactory factory = mo.get();
+      EntityManagerFactory factory = (EntityManagerFactory) mo.get();
       
       EntityManager em = factory.createEntityManager();
       
@@ -112,7 +115,7 @@ public class RemoteTestCase
    @Test
    public void test2() throws IOException, ClassNotFoundException
    {
-      EntityManagerFactory factory = mo.get();
+      EntityManagerFactory factory = (EntityManagerFactory) mo.get();
       
       EntityManager em = factory.createEntityManager();
       
