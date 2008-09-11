@@ -1,13 +1,18 @@
 <projectDescription>
   <name>jboss-jpa-deployers</name>
-  <comment>ToDo</comment>
+  <comment>The JBoss Container Managed JPA Deployers for deploying persistence units.
+    See EJB 3 JPA chapter 6 and 7.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
     </buildCommand>
+    <buildCommand>
+      <name>org.maven.ide.eclipse.maven2Builder</name>
+    </buildCommand>
   </buildSpec>
   <natures>
     <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>org.maven.ide.eclipse.maven2Nature</nature>
   </natures>
 </projectDescription>
