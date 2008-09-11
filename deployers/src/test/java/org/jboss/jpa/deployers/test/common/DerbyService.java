@@ -68,6 +68,11 @@ public class DerbyService
       ds = null;
    }
    
+   public void setJndiName(String jndiName)
+   {
+      this.jndiName = jndiName;
+   }
+   
    public void start() throws Exception
    {
       log.info("Starting derby service");

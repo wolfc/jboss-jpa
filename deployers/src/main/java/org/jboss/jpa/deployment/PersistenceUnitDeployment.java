@@ -34,7 +34,6 @@ import java.util.Set;
 import javax.naming.InitialContext;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitTransactionType;
 
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
@@ -42,7 +41,6 @@ import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
-import org.jboss.metadata.jpa.spec.TransactionType;
 import org.jboss.virtual.VFSUtils;
 import org.jboss.virtual.VirtualFile;
 
@@ -224,20 +222,6 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
 //
 //   }
 
-   protected PersistenceUnitTransactionType getJPATransactionType()
-   {
-      TransactionType type = metaData.getTransactionType();
-      if (type == TransactionType.RESOURCE_LOCAL)
-         return PersistenceUnitTransactionType.RESOURCE_LOCAL;
-      else // default or actually being JTA
-         return PersistenceUnitTransactionType.JTA;
-   }
-
-   private List<String> safeList(Set<String> set)
-   {
-      return (set == null || set.isEmpty()) ? Collections.<String>emptyList() : new ArrayList<String>(set);
-   }
-
    public void start() throws Exception
    {
       log.info("Starting persistence unit " + kernelName);
@@ -246,19 +230,16 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       props.putAll(defaultPersistenceProperties);
       props.put(HibernatePersistence.JACC_CONTEXT_ID, getJaccContextId());
 
-      PersistenceUnitInfoImpl pi = new PersistenceUnitInfoImpl();
-      log.debug("Using class loader " + di.getClassLoader());
-      pi.setClassLoader(di.getClassLoader());
+      List<URL> jarFiles = new ArrayList<URL>();
+      Set<String> files = metaData.getJarFiles();
+      if (files != null)
+      {
+         for (String jar : files)
+         {
+            jarFiles.add(getRelativeURL(jar));
+         }
+      }
 
-      ArrayList<URL> jarFiles = new ArrayList<URL>();
-      pi.setJarFiles(jarFiles);
-      pi.setPersistenceProviderClassName(HibernatePersistence.class.getName());
-      log.debug("Found persistence.xml file in EJB3 jar");
-      props.putAll(getProperties());
-      pi.setManagedClassnames(safeList(metaData.getClasses()));
-      pi.setPersistenceUnitName(metaData.getName());
-      pi.setMappingFileNames(safeList(metaData.getMappingFiles()));
-      pi.setExcludeUnlistedClasses(metaData.isExcludeUnlistedClasses());
       VirtualFile root = getPersistenceUnitRoot();
       log.debug("Persistence root: " + root);
       // TODO - update this with VFSUtils helper method
@@ -277,20 +258,9 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
                url = new URL(urlString.substring(3)); // (vfs)file and (vfs)jar are ok
          }
       }
-      pi.setPersistenceUnitRootUrl(url);
-      PersistenceUnitTransactionType transactionType = getJPATransactionType();
-      pi.setTransactionType(transactionType);
+      
+      PersistenceUnitInfoImpl pi = new PersistenceUnitInfoImpl(metaData, props, di.getClassLoader(), url, jarFiles, initialContext);
 
-      Set<String> files = metaData.getJarFiles();
-      if (files != null)
-      {
-         for (String jar : files)
-         {
-            jarFiles.add(getRelativeURL(jar));
-         }
-      }
-
-      if (metaData.getProvider() != null) pi.setPersistenceProviderClassName(metaData.getProvider());
       if (explicitEntityClasses.size() > 0)
       {
          List<String> classes = pi.getManagedClassNames();
@@ -298,32 +268,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
          else classes.addAll(explicitEntityClasses);
          pi.setManagedClassnames(classes);
       }
-      if (metaData.getJtaDataSource() != null)
-      {
-         pi.setJtaDataSource((javax.sql.DataSource) initialContext.lookup(metaData.getJtaDataSource()));
-      }
-      else if (transactionType == PersistenceUnitTransactionType.JTA)
-      {
-         throw new RuntimeException("Specification violation [EJB3 JPA 6.2.1.2] - "
-               + "You have not defined a jta-data-source for a JTA enabled persistence context named: " + metaData.getName());
-      }
-      if (metaData.getNonJtaDataSource() != null)
-      {
-         pi.setNonJtaDataSource((javax.sql.DataSource) initialContext.lookup(metaData.getNonJtaDataSource()));
-      }
-      else if (transactionType == PersistenceUnitTransactionType.RESOURCE_LOCAL)
-      {
-         throw new RuntimeException("Specification violation [EJB3 JPA 6.2.1.2] - "
-               + "You have not defined a non-jta-data-source for a RESOURCE_LOCAL enabled persistence context named: "
-               + metaData.getName());
-      }
-      pi.setProperties(props);
-
-      if (pi.getPersistenceUnitName() == null)
-      {
-         throw new RuntimeException("you must specify a name in persistence.xml");
-      }
-
+      
       Class<?> providerClass = Thread.currentThread().getContextClassLoader().loadClass(pi.getPersistenceProviderClassName());
 
       // EJBTHREE-893

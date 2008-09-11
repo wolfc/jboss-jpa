@@ -22,13 +22,24 @@
 package org.jboss.jpa.deployment;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
+
+import org.hibernate.ejb.HibernatePersistence;
+import org.jboss.logging.Logger;
+import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
+import org.jboss.metadata.jpa.spec.TransactionType;
 
 /**
  * Comment
@@ -38,6 +49,8 @@ import javax.sql.DataSource;
  */
 public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
 {
+   private static final Logger log = Logger.getLogger(PersistenceUnitInfoImpl.class);
+   
    private String entityManagerName;
    private DataSource jtaDataSource;
    private DataSource nonJtaDataSource;
@@ -55,9 +68,88 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
    {
    }
 
+   /**
+    * Note that the jarFiles in metaData are ignore and should be
+    * specified in the jarFiles argument.
+    * 
+    * @param metaData the persistence unit meta data
+    * @param props properties for the persistence provider
+    * @param classLoader the class loader used for entity class loading
+    * @param persistenceUnitRootUrl a jar or JarInputStream where the entities are packaged
+    * @param jarFiles a list of URLs pointing to jar or JarInputStreams where entities are packaged
+    * @param ctx naming context for looking up data sources
+    * @throws NamingException when a data source can't be located
+    */
+   public PersistenceUnitInfoImpl(PersistenceUnitMetaData metaData, Properties props, ClassLoader classLoader, URL persistenceUnitRootUrl, List<URL> jarFiles, Context ctx) throws NamingException
+   {
+      log.debug("Using class loader " + classLoader);
+      this.setClassLoader(classLoader);
+
+      this.setJarFiles(jarFiles);
+      this.setPersistenceProviderClassName(HibernatePersistence.class.getName());
+      log.debug("Found persistence.xml file in EJB3 jar");
+      this.setManagedClassnames(safeList(metaData.getClasses()));
+      this.setPersistenceUnitName(metaData.getName());
+      this.setMappingFileNames(safeList(metaData.getMappingFiles()));
+      this.setExcludeUnlistedClasses(metaData.isExcludeUnlistedClasses());
+      this.setPersistenceUnitRootUrl(persistenceUnitRootUrl);
+      PersistenceUnitTransactionType transactionType = getJPATransactionType(metaData);
+      this.setTransactionType(transactionType);
+
+      if (metaData.getProvider() != null) this.setPersistenceProviderClassName(metaData.getProvider());
+      /*
+      if (explicitEntityClasses.size() > 0)
+      {
+         List<String> classes = this.getManagedClassNames();
+         if (classes == null) classes = explicitEntityClasses;
+         else classes.addAll(explicitEntityClasses);
+         this.setManagedClassnames(classes);
+      }
+      */
+      if (metaData.getJtaDataSource() != null)
+      {
+         this.setJtaDataSource((javax.sql.DataSource) ctx.lookup(metaData.getJtaDataSource()));
+      }
+      else if (transactionType == PersistenceUnitTransactionType.JTA)
+      {
+         throw new RuntimeException("Specification violation [EJB3 JPA 6.2.1.2] - "
+               + "You have not defined a jta-data-source for a JTA enabled persistence context named: " + metaData.getName());
+      }
+      if (metaData.getNonJtaDataSource() != null)
+      {
+         this.setNonJtaDataSource((javax.sql.DataSource) ctx.lookup(metaData.getNonJtaDataSource()));
+      }
+      else if (transactionType == PersistenceUnitTransactionType.RESOURCE_LOCAL)
+      {
+         throw new RuntimeException("Specification violation [EJB3 JPA 6.2.1.2] - "
+               + "You have not defined a non-jta-data-source for a RESOURCE_LOCAL enabled persistence context named: "
+               + metaData.getName());
+      }
+      props.putAll(getProperties(metaData));
+      this.setProperties(props);
+
+      if (this.getPersistenceUnitName() == null)
+      {
+         throw new RuntimeException("you must specify a name in persistence.xml");
+      }
+
+      // EJBTHREE-893
+      /* TODO: can this work remotely?
+      if(!this.getProperties().containsKey("hibernate.session_factory_name"))
+      {
+         this.getProperties().put("hibernate.session_factory_name", kernelName);
+      }
+      */
+   }
+   
    public void addTransformer(ClassTransformer transformer)
    {
       //throw new RuntimeException("NOT IMPLEMENTED");
+   }
+
+   private static List<String> safeList(Set<String> set)
+   {
+      return (set == null || set.isEmpty()) ? Collections.<String>emptyList() : new ArrayList<String>(set);
    }
 
    public ClassLoader getNewTempClassLoader()
@@ -95,6 +187,15 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       this.jtaDataSource = jtaDataSource;
    }
 
+   protected static PersistenceUnitTransactionType getJPATransactionType(PersistenceUnitMetaData metaData)
+   {
+      TransactionType type = metaData.getTransactionType();
+      if (type == TransactionType.RESOURCE_LOCAL)
+         return PersistenceUnitTransactionType.RESOURCE_LOCAL;
+      else // default or actually being JTA
+         return PersistenceUnitTransactionType.JTA;
+   }
+
    public DataSource getNonJtaDataSource()
    {
       return nonJtaDataSource;
@@ -122,6 +223,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
 
    public void setJarFiles(List<URL> jarFiles)
    {
+      // Hibernate EM 3.3.2.GA LogHelper@49
+      assert jarFiles != null : "jarFiles is null";
+      
       this.jarFiles = jarFiles;
    }
 
@@ -138,6 +242,12 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
    public Properties getProperties()
    {
       return properties;
+   }
+
+   protected static Map<String, String> getProperties(PersistenceUnitMetaData metaData)
+   {
+      Map<String, String> properties = metaData.getProperties();
+      return (properties != null) ? properties : Collections.<String, String>emptyMap();
    }
 
    public void setProperties(Properties properties)
