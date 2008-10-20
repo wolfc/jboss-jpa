@@ -277,6 +277,13 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
          pi.getProperties().put("hibernate.session_factory_name", kernelName);
       }
       
+      // EJBTHREE-954/JBAS-6111
+      // Ensure 2nd level cache entries are segregated from other deployments
+      if (pi.getProperties().getProperty("hibernate.cache.region_prefix") == null)
+      {
+         pi.getProperties().setProperty("hibernate.cache.region_prefix", kernelName);
+      }
+      
       PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
       actualFactory = pp.createContainerEntityManagerFactory(pi, null);
 
