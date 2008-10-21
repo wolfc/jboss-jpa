@@ -196,27 +196,13 @@ public class PersistenceDeployment //extends ServiceMBeanSupport
       List<PersistenceUnitMetaData> pumds = metaData.getPersistenceUnits();
       for (PersistenceUnitMetaData metaData : pumds)
       {
-         // FIXME: determine scoping
-//         boolean isScoped = ejbContainers.size() > 0;
-         boolean isScoped = false;
-
          Map<String, String> properties = metaData.getProperties();
          if (properties == null)
          {
             properties = new HashMap<String, String>();
             metaData.setProperties(properties);
-         }
-         // FIXME: reinstate
-//         // Ensure 2nd level cache entries are segregated from other deployments
-//         String cache_prefix = properties.get(SecondLevelCacheUtil.HIBERNATE_CACHE_REGION_PREFIX);
-//         if (cache_prefix == null)
-//         {
-//            // Create a region_prefix for the 2nd level cache to ensure
-//            // deployments are segregated
-//            String jarName = isScoped ? unit.getShortName() : null;
-//            cache_prefix = SecondLevelCacheUtil.createCacheRegionPrefix(earShortName, jarName, metaData.getName());
-//            properties.put(SecondLevelCacheUtil.HIBERNATE_CACHE_REGION_PREFIX, cache_prefix);
-//         }
+         }         
+         
          PersistenceUnitDeployment deployment = new PersistenceUnitDeployment(initialContext, this, explicitEntityClasses, metaData, "wrong-kernel-name", getDeploymentUnit(), null);
          PersistenceUnitRegistry.register(deployment);
          persistenceUnitDeployments.add(deployment);
