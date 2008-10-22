@@ -21,31 +21,24 @@
  */
 package org.jboss.jpa.spi;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
 
 /**
- * EJB 3 JPA 7.1.1. To create entity managers within a container
- * there is a bean installed which conforms to this interface.
+ * Query the current context for extended persistence contexts.
  * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public interface PersistenceUnit
+public interface XPCResolver
 {
    /**
-    * Obtain the container entity manager factory.
+    * Get an extended persistence context within the current context.
     * 
-    * @return an EntityManagerFactory
-    */
-   EntityManagerFactory getContainerEntityManagerFactory();
-   
-   String getName();
-   
-   /**
-    * The extended persistence context resolver associated with
-    * this persistence unit.
+    * Note that the full kernel name must be specified to resolve ambiguity
+    * with persistence units in different modules.
     * 
-    * @return the XPC resolver
+    * @param kernelName the identification of the persistence context
+    * @return the extended persistence context or null
     */
-   XPCResolver getXPCResolver();
+   EntityManager getExtendedPersistenceContext(String kernelName);
 }

@@ -19,33 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jpa.spi;
+package org.jboss.jpa.resolvers;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+
+import org.jboss.jpa.spi.XPCResolver;
 
 /**
- * EJB 3 JPA 7.1.1. To create entity managers within a container
- * there is a bean installed which conforms to this interface.
+ * The default XPC resolver is only useful in an environment where
+ * there are no XPC aware components.
  * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public interface PersistenceUnit
+public class DefaultXPCResolver implements XPCResolver
 {
-   /**
-    * Obtain the container entity manager factory.
-    * 
-    * @return an EntityManagerFactory
-    */
-   EntityManagerFactory getContainerEntityManagerFactory();
-   
-   String getName();
-   
-   /**
-    * The extended persistence context resolver associated with
-    * this persistence unit.
-    * 
-    * @return the XPC resolver
-    */
-   XPCResolver getXPCResolver();
+   public EntityManager getExtendedPersistenceContext(String kernelName)
+   {
+      return null;
+   }
 }

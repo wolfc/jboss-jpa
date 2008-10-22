@@ -32,15 +32,18 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 
 import org.hibernate.ejb.HibernatePersistence;
+import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.jpa.injection.InjectedEntityManagerFactory;
 import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
+import org.jboss.jpa.spi.XPCResolver;
 import org.jboss.jpa.tx.TransactionScopedEntityManager;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
@@ -68,6 +71,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    protected String kernelName;
    protected PersistenceDeployment deployment;
    private Properties defaultPersistenceProperties;
+   private XPCResolver xpcResolver;
 
    public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String kernelName, VFSDeploymentUnit deploymentUnit, Properties defaultPersistenceProperties)
    {
@@ -199,6 +203,19 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       }
    }
    
+   public XPCResolver getXPCResolver()
+   {
+      assert xpcResolver != null : "xpcResolver is null";  
+      return xpcResolver;
+   }
+   
+   @Inject
+   public void setXPCResolver(XPCResolver xpcResolver)
+   {
+      assert xpcResolver != null : "xpcResolver is null";
+      this.xpcResolver = xpcResolver;
+   }
+   
 //   public void addDependencies(DependencyPolicy policy)
 //   {
 //      Map<String, String> props = getProperties();
@@ -311,17 +328,22 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    {
       log.info("Stopping persistence unit " + kernelName);
 
-      // FIXME: reinstate
-//      String entityManagerJndiName = getProperties().get("jboss.entity.manager.jndi.name");
-//      if (entityManagerJndiName != null)
-//      {
-//         NonSerializableFactory.unbind(initialContext, entityManagerJndiName);
-//      }
-//      String entityManagerFactoryJndiName = getProperties().get("jboss.entity.manager.factory.jndi.name");
-//      if (entityManagerFactoryJndiName != null)
-//      {
-//         NonSerializableFactory.unbind(initialContext, entityManagerFactoryJndiName);
-//      }
+      String entityManagerJndiName = getProperties().get("jboss.entity.manager.jndi.name");
+      if (entityManagerJndiName != null)
+      {
+         unbind(entityManagerJndiName);
+      }
+      String entityManagerFactoryJndiName = getProperties().get("jboss.entity.manager.factory.jndi.name");
+      if (entityManagerFactoryJndiName != null)
+      {
+         unbind(entityManagerFactoryJndiName);
+      }
       managedFactory.destroy();
+   }
+   
+   private void unbind(String name) throws NamingException
+   {
+      NonSerializableFactory.unbind(name);
+      initialContext.unbind(name);
    }
 }

@@ -35,7 +35,9 @@ import javax.persistence.Query;
 import org.hibernate.Session;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.jboss.jpa.deployment.ManagedEntityManagerFactory;
-import org.jboss.jpa.spi.XPCAware;
+import org.jboss.jpa.spi.PersistenceUnit;
+import org.jboss.jpa.spi.PersistenceUnitRegistry;
+import org.jboss.jpa.spi.XPCResolver;
 import org.jboss.jpa.util.ManagedEntityManagerFactoryHelper;
 import org.jboss.logging.Logger;
 
@@ -246,8 +248,10 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
          }
       }
       */
-      String id = factory.getKernelName();
-      EntityManager em = XPCAware.getExtendedPersistenceContext(id);
+      String kernelName = factory.getKernelName();
+      PersistenceUnit pu = PersistenceUnitRegistry.getPersistenceUnit(kernelName);
+      XPCResolver xpcResolver = pu.getXPCResolver();
+      EntityManager em = xpcResolver.getExtendedPersistenceContext(kernelName);
       if(em != null)
          return em;
       
