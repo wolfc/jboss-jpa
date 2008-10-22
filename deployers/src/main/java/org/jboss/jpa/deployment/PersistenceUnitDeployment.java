@@ -32,15 +32,19 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.naming.InitialContext;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.jpa.injection.InjectedEntityManagerFactory;
 import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
+import org.jboss.jpa.tx.TransactionScopedEntityManager;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
+import org.jboss.util.naming.NonSerializableFactory;
 import org.jboss.virtual.VFSUtils;
 import org.jboss.virtual.VirtualFile;
 
@@ -289,19 +293,18 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
 
       managedFactory = new ManagedEntityManagerFactory(actualFactory, kernelName);
 
-      // FIXME: Reinstate
-//      String entityManagerJndiName = (String) props.get("jboss.entity.manager.jndi.name");
-//      if (entityManagerJndiName != null)
-//      {
-//         EntityManager injectedManager = new TransactionScopedEntityManager(managedFactory);
-//         NonSerializableFactory.rebind(initialContext, entityManagerJndiName, injectedManager);
-//      }
-//      String entityManagerFactoryJndiName = (String) props.get("jboss.entity.manager.factory.jndi.name");
-//      if (entityManagerFactoryJndiName != null)
-//      {
-//         EntityManagerFactory injectedFactory = new InjectedEntityManagerFactory(managedFactory);
-//         NonSerializableFactory.rebind(initialContext, entityManagerFactoryJndiName, injectedFactory);
-//      }
+      String entityManagerJndiName = (String) props.get("jboss.entity.manager.jndi.name");
+      if (entityManagerJndiName != null)
+      {
+         EntityManager injectedManager = new TransactionScopedEntityManager(managedFactory);
+         NonSerializableFactory.rebind(initialContext, entityManagerJndiName, injectedManager);
+      }
+      String entityManagerFactoryJndiName = (String) props.get("jboss.entity.manager.factory.jndi.name");
+      if (entityManagerFactoryJndiName != null)
+      {
+         EntityManagerFactory injectedFactory = new InjectedEntityManagerFactory(managedFactory);
+         NonSerializableFactory.rebind(initialContext, entityManagerFactoryJndiName, injectedFactory);
+      }
    }
 
    public void stop() throws Exception

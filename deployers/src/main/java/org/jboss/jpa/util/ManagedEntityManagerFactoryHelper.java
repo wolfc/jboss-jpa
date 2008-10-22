@@ -19,18 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jpa.remote.test.remote;
+package org.jboss.jpa.util;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import org.jboss.jpa.deployment.ManagedEntityManagerFactory;
+import org.jboss.jpa.deployment.PersistenceUnitDeployment;
+import org.jboss.jpa.spi.PersistenceUnitRegistry;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-@Entity
-public class Person
+public class ManagedEntityManagerFactoryHelper
 {
-   @Id
-   private int id;
+   public static ManagedEntityManagerFactory getManagedEntityManagerFactory(String kernelName)
+   {
+      PersistenceUnitDeployment pu = (PersistenceUnitDeployment) PersistenceUnitRegistry.getPersistenceUnit(kernelName);
+      if(pu != null)
+         return pu.getManagedFactory();
+      return null;
+   }
 }

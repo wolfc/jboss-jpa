@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.jboss.jpa.deployers.test.common.DerbyService;
+import org.jboss.jpa.deployers.test.common.Person;
 import org.jboss.jpa.remote.RemotelyInjectEntityManagerFactory;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.metadata.jpa.spec.TransactionType;

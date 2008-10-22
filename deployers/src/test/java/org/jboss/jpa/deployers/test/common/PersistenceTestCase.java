@@ -64,8 +64,15 @@ public abstract class PersistenceTestCase
    protected void deploy(String spec) throws DeploymentException, IOException 
    {
       URL url = getClass().getResource(spec);
+      if(url == null)
+         throw new IllegalArgumentException("Can't find resource '" + spec + "'");
+      deploy(url);
+   }
+   
+   protected static void deploy(URL url) throws DeploymentException, IOException
+   {
       VirtualFile file = VFS.getRoot(url);
       VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
-      delegate.getMainDeployer().deploy(deployment);
+      delegate.getMainDeployer().deploy(deployment);      
    }
 }
