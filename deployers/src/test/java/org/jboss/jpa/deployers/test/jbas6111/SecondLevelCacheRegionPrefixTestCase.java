@@ -31,13 +31,11 @@ import java.util.Set;
 
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
-import org.jboss.jpa.deployers.test.common.MainDeployerTestDelegate;
 import org.jboss.jpa.deployers.test.common.MockRegionFactory;
+import org.jboss.jpa.deployers.test.common.PersistenceTestCase;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -47,27 +45,8 @@ import org.junit.Test;
  * 
  * @version $Revision: $
  */
-public class SecondLevelCacheRegionPrefixTestCase
+public class SecondLevelCacheRegionPrefixTestCase extends PersistenceTestCase
 {
-   private static MainDeployerTestDelegate delegate;
-   
-   @AfterClass
-   public static void afterClass() throws Exception
-   {
-      delegate.tearDown();
-   }
-   
-   @BeforeClass
-   public static void beforeClass() throws Exception
-   {
-      delegate = new MainDeployerTestDelegate(SecondLevelCacheRegionPrefixTestCase.class);
-      delegate.setUp();
-      
-      delegate.deploy("/org/jboss/jpa/deployers/test/common/jndi-beans.xml");
-      delegate.deploy("/org/jboss/jpa/deployers/test/common/jbossts-beans.xml");
-      delegate.deploy("derby-beans.xml");
-   }
-   
    @After
    public void after() throws Exception
    {

@@ -45,6 +45,10 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
    public PersistenceDeployer()
    {
       //setComponentVisitor(new PersistenceUnitDeploymentVisitor());
+      // Since we don't set component visitor
+      addInput(PersistenceMetaData.class);
+      setOutput(PersistenceUnitMetaData.class);
+      
       setDeploymentVisitor(new PersistenceDeploymentVisitor());
    }
 

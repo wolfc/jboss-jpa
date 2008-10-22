@@ -28,40 +28,19 @@ import java.net.URL;
 
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
-import org.jboss.jpa.deployers.test.common.MainDeployerTestDelegate;
+import org.jboss.jpa.deployers.test.common.PersistenceTestCase;
 import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class DeploymentTestCase
+public class DeploymentTestCase extends PersistenceTestCase
 {
-   private static MainDeployerTestDelegate delegate;
-   
-   @AfterClass
-   public static void afterClass() throws Exception
-   {
-      delegate.tearDown();
-   }
-   
-   @BeforeClass
-   public static void beforeClass() throws Exception
-   {
-      delegate = new MainDeployerTestDelegate(DeploymentTestCase.class);
-      delegate.setUp();
-      
-      delegate.deploy("/org/jboss/jpa/deployers/test/common/jndi-beans.xml");
-      delegate.deploy("/org/jboss/jpa/deployers/test/common/jbossts-beans.xml");
-      delegate.deploy("derby-beans.xml");
-   }
-   
    @Test
    public void test1() throws Exception
    {

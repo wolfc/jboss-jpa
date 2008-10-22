@@ -27,7 +27,6 @@ import java.net.URL;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
-import org.jboss.jpa.deployers.test.deployment.DeploymentTestCase;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
 import org.junit.AfterClass;
@@ -41,7 +40,7 @@ import org.junit.BeforeClass;
  */
 public abstract class PersistenceTestCase
 {
-   private static MainDeployerTestDelegate delegate;
+   protected static MainDeployerTestDelegate delegate;
    
    @AfterClass
    public static void afterClass() throws Exception
@@ -52,13 +51,13 @@ public abstract class PersistenceTestCase
    @BeforeClass
    public static void beforeClass() throws Exception
    {
-      delegate = new MainDeployerTestDelegate(DeploymentTestCase.class);
+      delegate = new MainDeployerTestDelegate(PersistenceTestCase.class);
       delegate.setUp();
       
       delegate.deploy("/org/jboss/jpa/deployers/test/common/jndi-beans.xml");
       delegate.deploy("/org/jboss/jpa/deployers/test/common/jbossts-beans.xml");
-      delegate.deploy("/org/jboss/jpa/deployers/test/deployment/derby-beans.xml");
-      //delegate.deploy("/org/jboss/jpa/deployers/test/deployment/DeploymentTestCase.xml");
+      delegate.deploy("/org/jboss/jpa/deployers/test/common/derby-beans.xml");
+      delegate.deploy("/org/jboss/jpa/deployers/test/common/jpa-deployers-beans.xml");
    }
    
    protected void deploy(String spec) throws DeploymentException, IOException 
