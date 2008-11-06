@@ -89,6 +89,8 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
 
    public void create()
    {
+      assert xpcResolver != null : "xpcResolver wasn't set on " + this;
+      
       // To allow for serializable objects to obtain a reference back
       PersistenceUnitRegistry.register(this);
    }
@@ -205,14 +207,14 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    
    public XPCResolver getXPCResolver()
    {
-      assert xpcResolver != null : "xpcResolver is null";  
+      assert xpcResolver != null : "xpcResolver is null in " + this;  
       return xpcResolver;
    }
    
    @Inject
    public void setXPCResolver(XPCResolver xpcResolver)
    {
-      assert xpcResolver != null : "xpcResolver is null";
+      // Do not check for null, because MC does uninstall with null
       this.xpcResolver = xpcResolver;
    }
    
