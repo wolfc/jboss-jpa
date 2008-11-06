@@ -36,34 +36,27 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractSimpleRealDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.jpa.deployment.PersistenceDeployment;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
 import org.jboss.jpa.resolvers.DataSourceDependencyResolver;
 import org.jboss.jpa.resolvers.PersistenceUnitDependencyResolver;
-import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
+ * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  * @version $Revision: $
  */
 public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<PersistenceUnitMetaData>
 {
-   private static final Logger log = Logger.getLogger(PersistenceUnitDeployer.class);
-   
    private Properties defaultPersistenceProperties;
-
    private DataSourceDependencyResolver dataSourceDependencyResolver;
-
    private PersistenceUnitDependencyResolver persistenceUnitDependencyResolver;
    
    public PersistenceUnitDeployer()
    {
       super(PersistenceUnitMetaData.class);
-      
       // We want to process the components created by PersistenceDeployer, this seems to be the only way to get there.
       setComponentsOnly(true);
-      
       addOutput(BeanMetaData.class);
    }
 
@@ -91,7 +84,6 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
             builder.addDependency(props.get(property));
          }
       }
-
    }
 
    @Override
@@ -104,10 +96,9 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
          String name = persistenceUnitDependencyResolver.createBeanName(unit, metaData.getName());
          
          InitialContext initialContext = new InitialContext();
-         PersistenceDeployment persistenceDeployment = null;
          List<String> explicitEntityClasses = new ArrayList<String>();
          VFSDeploymentUnit deploymentUnit = (VFSDeploymentUnit) unit.getParent();
-         PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, persistenceDeployment, explicitEntityClasses, metaData, name, deploymentUnit, defaultPersistenceProperties);
+         PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, null, explicitEntityClasses, metaData, name, deploymentUnit, defaultPersistenceProperties);
          
          AbstractBeanMetaData beanMetaData = new AbstractBeanMetaData(name, PersistenceUnitDeployment.class.getName());
          BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
