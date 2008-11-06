@@ -22,7 +22,6 @@
 package org.jboss.jpa.deployers;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.jboss.deployers.spi.deployer.helpers.AbstractComponentDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
@@ -68,7 +67,7 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
          // we should be OK with this name, as I don't expect multiple PUMDs with same name on same DU?
          String pumdName = component.getName();
          if (pumdName == null)
-            pumdName = UUID.randomUUID().toString();
+            throw new IllegalStateException("Persistence unit is unnamed in " + unit);
          
          return PersistenceUnitMetaData.class.getName() + "." + pumdName;
       }

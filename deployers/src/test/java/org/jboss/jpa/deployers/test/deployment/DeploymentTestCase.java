@@ -23,14 +23,23 @@ package org.jboss.jpa.deployers.test.deployment;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.jboss.deployers.client.spi.IncompleteDeploymentException;
+import org.jboss.deployers.plugins.attachments.AttachmentsImpl;
+import org.jboss.deployers.spi.attachments.MutableAttachments;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
 import org.jboss.jpa.deployers.test.common.PersistenceTestCase;
 import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
+import org.jboss.metadata.jpa.spec.PersistenceMetaData;
+import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
 import org.junit.Test;
@@ -60,5 +69,38 @@ public class DeploymentTestCase extends PersistenceTestCase
       delegate.getMainDeployer().undeploy(deployment);
       
       assertNull("Persistence unit still found in PersistenceUnitRegistry", PersistenceUnitRegistry.getPersistenceUnit(name));
+   }
+
+   /**
+    * See EJB 3.0 6.3 page 145 attribute name is required.
+    */
+   @Test
+   public void testUnnamed() throws Exception
+   {
+      String spec = "/org/jboss/jpa/deployers/test/deployment/unnamed";
+      URL url = getClass().getResource(spec);
+      VirtualFile file = VFS.getRoot(url);
+      
+      // Force an illegal set of meta data
+      PersistenceUnitMetaData persistenceUnit = new PersistenceUnitMetaData();
+      List<PersistenceUnitMetaData> persistenceUnits = new ArrayList<PersistenceUnitMetaData>();
+      persistenceUnits.add(persistenceUnit);
+      PersistenceMetaData attachment = new PersistenceMetaData();
+      attachment.setPersistenceUnits(persistenceUnits);
+      MutableAttachments attachments = new AttachmentsImpl();
+      attachments.addAttachment(PersistenceMetaData.class, attachment);
+      
+      VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
+      deployment.setPredeterminedManagedObjects(attachments);
+      try
+      {
+         delegate.getMainDeployer().deploy(deployment);
+         fail("It should not have been possible to deploy with a persistence unit name");
+      }
+      catch(IncompleteDeploymentException e)
+      {
+         Throwable t = e.getIncompleteDeployments().getDeploymentsInError().values().iterator().next();
+         assertTrue(t.getCause().getMessage().startsWith("Persistence unit is unnamed"));
+      }
    }
 }
