@@ -107,7 +107,7 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
 
          DeploymentUnit parent = unit.getParent();
          if (parent == null)
-            throw new IllegalArgumentException("Parent unit should not be null as this unit should be component.");
+            throw new IllegalArgumentException("Parent unit should not be null as this unit should be component: " + unit);
 
          parent.addAttachment(BeanMetaData.class.getName() + "." + name, builder.getBeanMetaData(), BeanMetaData.class);
       }
