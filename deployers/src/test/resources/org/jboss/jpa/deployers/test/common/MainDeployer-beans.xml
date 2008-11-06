@@ -38,6 +38,6 @@
    <bean name="BeanDeployer" class="org.jboss.deployers.vfs.deployer.kernel.BeanDeployer"/>
    <bean name="KernelDeploymentDeployer" class="org.jboss.deployers.vfs.deployer.kernel.KernelDeploymentDeployer"/>
    <bean name="BeanMetaDataDeployer" class="org.jboss.deployers.vfs.deployer.kernel.BeanMetaDataDeployer">
-      <constructor><parameter><inject bean="jboss.kernel:service=Kernel"/></parameter></constructor>
+      <constructor><parameter class="org.jboss.kernel.Kernel"><inject bean="jboss.kernel:service=Kernel"/></parameter></constructor>
    </bean>
 </deployment>
