@@ -21,26 +21,23 @@
  */
 package org.jboss.jpa.deployers;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.deployers.spi.deployer.helpers.AbstractComponentDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.jpa.resolvers.PersistenceUnitDependencyResolver;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
+ * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  * @version $Revision: $
  */
 public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMetaData, PersistenceUnitMetaData>
 {
    private static final Logger log = Logger.getLogger(PersistenceDeployer.class);
-   
-   private PersistenceUnitDependencyResolver persistenceUnitDependencyResolver;
    
    public PersistenceDeployer()
    {
@@ -68,33 +65,12 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
       @Override
       protected String getName(DeploymentUnit unit, PersistenceUnitMetaData component)
       {
-         return persistenceUnitDependencyResolver.createBeanName(unit, component.getName());
+         // we should be OK with this name, as I don't expect multiple PUMDs with same name on same DU?
+         String pumdName = component.getName();
+         if (pumdName == null)
+            pumdName = UUID.randomUUID().toString();
+         
+         return PersistenceUnitMetaData.class.getName() + "." + pumdName;
       }
-   }
-   
-   private class PersistenceUnitDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceUnitMetaData, PersistenceUnitMetaData>
-   {
-      public Class<PersistenceUnitMetaData> getVisitorType()
-      {
-         return PersistenceUnitMetaData.class;
-      }
-
-      @Override
-      protected List<PersistenceUnitMetaData> getComponents(PersistenceUnitMetaData deployment)
-      {
-         return Collections.singletonList(deployment);
-      }
-
-      @Override
-      protected String getName(DeploymentUnit unit, PersistenceUnitMetaData component)
-      {
-         return persistenceUnitDependencyResolver.createBeanName(unit, component.getName());
-      }
-   }
-   
-   @Inject
-   public void setPersistenceUnitDependencyResolver(PersistenceUnitDependencyResolver resolver)
-   {
-      this.persistenceUnitDependencyResolver = resolver;
    }
 }
