@@ -24,7 +24,6 @@ package org.jboss.jpa.deployers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -114,8 +113,12 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
          BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
          builder.setConstructorValue(pu);
          addDependencies(builder, metaData);
-         
-         unit.addAttachment(BeanMetaData.class, builder.getBeanMetaData());
+
+         DeploymentUnit parent = unit.getParent();
+         if (parent == null)
+            throw new IllegalArgumentException("Parent unit should not be null as this unit should be component.");
+
+         parent.addAttachment(BeanMetaData.class.getName() + "." + name, builder.getBeanMetaData(), BeanMetaData.class);
       }
       catch(NamingException e)
       {
