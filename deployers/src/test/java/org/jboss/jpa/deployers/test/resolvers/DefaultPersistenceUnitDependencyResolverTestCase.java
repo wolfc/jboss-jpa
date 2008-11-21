@@ -37,6 +37,7 @@ import org.jboss.jpa.resolvers.DefaultPersistenceUnitDependencyResolver;
 import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -45,14 +46,17 @@ import org.junit.Test;
  */
 public class DefaultPersistenceUnitDependencyResolverTestCase
 {
-   @Test
-   public void resolveDefaultPersistenceUnit() throws Exception
+   private static DefaultPersistenceUnitDependencyResolver resolver;
+   private static VFSDeploymentUnit deploymentUnit;
+   
+   @BeforeClass
+   public static void beforeClass() throws Exception
    {
-      DefaultPersistenceUnitDependencyResolver resolver = new DefaultPersistenceUnitDependencyResolver();
+      resolver = new DefaultPersistenceUnitDependencyResolver();
       resolver.setJavaEEModuleInformer(new SimpleJavaEEModuleInformer());
       
-      String common = "/org/jboss/jpa/deployers/test/parsing";
-      URL url = getClass().getResource(common);
+      String common = "/org/jboss/jpa/deployers/test";
+      URL url = DefaultPersistenceUnitDependencyResolverTestCase.class.getResource(common);
       assertNotNull(url);
       VirtualFile root = VFS.getRoot(url);
       assertNotNull(root);
@@ -63,22 +67,45 @@ public class DefaultPersistenceUnitDependencyResolverTestCase
       deployer.create();
       deployer.start();
       
-      VFSDeploymentContext deploymentContext = new AbstractVFSDeploymentContext(root, "");
-      deploymentContext.setMetaDataLocations(Collections.singletonList(root));
-      VFSDeploymentUnit deploymentUnit = new AbstractVFSDeploymentUnit(deploymentContext);
+      VirtualFile file = root.getChild("parsing");
+      
+      VFSDeploymentContext parent = new AbstractVFSDeploymentContext(root, "");
+      
+      VFSDeploymentContext deploymentContext = new AbstractVFSDeploymentContext(file, "");
+      deploymentContext.setMetaDataLocations(Collections.singletonList(file));
+      deploymentContext.setParent(parent);
+      parent.addChild(deploymentContext);
+      
+      deploymentUnit = new AbstractVFSDeploymentUnit(deploymentContext);
       
       deployer.deploy(deploymentUnit);
       PersistenceMetaData metaData = deploymentUnit.getAttachment(PersistenceMetaData.class);
       assertNotNull(metaData);
-      
+   }
+   
+   @Test
+   public void resolveDefaultPersistenceUnitEmpty() throws Exception
+   {
+      // We want the default persistence unit
+      String persistenceUnitName = "";
+      String beanName = resolver.resolvePersistenceUnitSupplier(deploymentUnit, persistenceUnitName);
+      assertEquals("persistence.unit:unitName=#dummy", beanName);
+   }
+   
+   @Test
+   public void resolveDefaultPersistenceUnitNull() throws Exception
+   {
       // We want the default persistence unit
       String persistenceUnitName = null;
       String beanName = resolver.resolvePersistenceUnitSupplier(deploymentUnit, persistenceUnitName);
       assertEquals("persistence.unit:unitName=#dummy", beanName);
-      
-      // We want the default persistence unit
-      persistenceUnitName = "";
-      beanName = resolver.resolvePersistenceUnitSupplier(deploymentUnit, persistenceUnitName);
+   }
+   
+   @Test
+   public void testRelativePersistenceUnit() throws Exception
+   {
+      String persistenceUnitName = "../parsing#dummy";
+      String beanName = resolver.resolvePersistenceUnitSupplier(deploymentUnit, persistenceUnitName);
       assertEquals("persistence.unit:unitName=#dummy", beanName);
    }
 }

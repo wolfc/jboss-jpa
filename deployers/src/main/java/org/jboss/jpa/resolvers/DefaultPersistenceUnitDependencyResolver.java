@@ -100,7 +100,7 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
          name = path.substring(0, i);
       for(DeploymentUnit child : current.getChildren())
       {
-         if(child.getName().equals(name))
+         if(child.getSimpleName().equals(name))
             return child;
       }
       throw new IllegalArgumentException("Can't find a deployment unit named " + name + " at " + current);
