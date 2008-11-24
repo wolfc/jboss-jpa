@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jboss-jpa-deployers</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0-Beta4</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA Deployers</name>
   <description>
@@ -105,4 +105,10 @@
     </dependency>
     
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/jpa/tags/jboss-jpa-deployers-1.0.0-Beta4</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/jpa/tags/jboss-jpa-deployers-1.0.0-Beta4</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jpa/tags/jboss-jpa-deployers-1.0.0-Beta4</url>
+  </scm>
 </project>
