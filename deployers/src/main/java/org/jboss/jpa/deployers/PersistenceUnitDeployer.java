@@ -64,7 +64,8 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
    private void addDependencies(BeanMetaDataBuilder builder, PersistenceUnitMetaData metaData)
    {
       // Initialize properties to default
-      Properties props = defaultPersistenceProperties;
+      Properties props = new Properties();
+      props.putAll(defaultPersistenceProperties);
       
       // Add properties from metadata
       Map<String, String> metadataProps = metaData.getProperties();
