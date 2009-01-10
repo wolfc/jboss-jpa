@@ -23,6 +23,7 @@ package org.jboss.jpa.deployers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -62,7 +63,13 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
 
    private void addDependencies(BeanMetaDataBuilder builder, PersistenceUnitMetaData metaData)
    {
+      // Initialize properties to default
       Properties props = defaultPersistenceProperties;
+      
+      // Add properties from metadata
+      Map<String, String> metadataProps = metaData.getProperties();
+      props.putAll(metadataProps);
+      
       if (!props.containsKey("jboss.no.implicit.datasource.dependency"))
       {
          if (metaData.getJtaDataSource() != null)
