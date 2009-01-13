@@ -49,7 +49,7 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
       return "persistence.unit:unitName=" + unitName;
    }
 
-   private String findWithinApplication(DeploymentUnit unit, String persistenceUnitName)
+   protected String findWithinApplication(DeploymentUnit unit, String persistenceUnitName)
    {
       String name = findWithinModule(unit, persistenceUnitName, false);
       if(name != null)
@@ -68,7 +68,7 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
     * When finding the default persistence unit, the first persistence unit encountered is returned.
     * TODO: Maybe the name of unscoped persistence units should be changed, so only one can be deployed anyway.
     */
-   private String findWithinModule(DeploymentUnit unit, String persistenceUnitName, boolean allowScoped)
+   protected String findWithinModule(DeploymentUnit unit, String persistenceUnitName, boolean allowScoped)
    {
       if(!allowScoped && isScoped(unit))
          return null;
@@ -84,7 +84,7 @@ public class DefaultPersistenceUnitDependencyResolver implements PersistenceUnit
       return null;
    }
    
-   private static DeploymentUnit getDeploymentUnit(DeploymentUnit current, String path)
+   protected static DeploymentUnit getDeploymentUnit(DeploymentUnit current, String path)
    {
       if(path.startsWith("/"))
          return getDeploymentUnit(current.getTopLevel(), path.substring(1));
