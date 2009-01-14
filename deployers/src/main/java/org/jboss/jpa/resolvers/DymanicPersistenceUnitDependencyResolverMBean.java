@@ -21,18 +21,13 @@
  */
 package org.jboss.jpa.resolvers;
 
-import org.jboss.beans.metadata.api.annotations.Inject;
-import org.jboss.jpa.resolvers.strategy.JBossSearchStrategy;
-
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class InterApplicationPersistenceUnitDependencyResolver extends BasePersistenceUnitDependencyResolver
+public interface DymanicPersistenceUnitDependencyResolverMBean
 {
-   @Inject
-   public void setSearchStrategy(JBossSearchStrategy strategy)
-   {
-      super.setSearchStrategy(strategy);
-   }
+   boolean getSpecCompliant();
+   
+   void setSpecCompliant(boolean specCompliant);
 }

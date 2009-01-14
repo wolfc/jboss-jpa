@@ -21,21 +21,56 @@
  */
 package org.jboss.jpa.resolvers;
 
+import org.jboss.aop.microcontainer.aspects.jmx.JMX;
 import org.jboss.beans.metadata.api.annotations.Inject;
+import org.jboss.beans.metadata.api.annotations.Start;
+import org.jboss.jpa.resolvers.strategy.JBossSearchStrategy;
 import org.jboss.jpa.resolvers.strategy.SpecCompliantSearchStrategy;
 
-
 /**
- * The default implementation of a PersistenceUnitDependencyResolver.
- * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class DefaultPersistenceUnitDependencyResolver extends BasePersistenceUnitDependencyResolver
+@JMX(exposedInterface=DymanicPersistenceUnitDependencyResolverMBean.class)
+public class DynamicPersistenceUnitDependencyResolver extends BasePersistenceUnitDependencyResolver
+   implements DymanicPersistenceUnitDependencyResolverMBean
 {
-   @Inject
-   public void setSearchStrategy(SpecCompliantSearchStrategy strategy)
+   private boolean specCompliant = false;
+   
+   private JBossSearchStrategy jbossSearchStrategy;
+   
+   private SpecCompliantSearchStrategy specCompliantStrategy;
+   
+   public boolean getSpecCompliant()
    {
-      super.setSearchStrategy(strategy);
+      return specCompliant;
+   }
+   
+   @Inject
+   public void setJBossSearchStrategy(JBossSearchStrategy strategy)
+   {
+      this.jbossSearchStrategy = strategy;
+   }
+   
+   public void setSpecCompliant(boolean specCompliant)
+   {
+      this.specCompliant = specCompliant;
+      if(specCompliant)
+         setSearchStrategy(specCompliantStrategy);
+      else
+         setSearchStrategy(jbossSearchStrategy);
+   }
+   
+   @Inject
+   public void setSpecCompliantSearchStrategy(SpecCompliantSearchStrategy strategy)
+   {
+      this.specCompliantStrategy = strategy;
+   }
+   
+   @Start
+   public void start()
+   {
+      // make sure we actually obey any overrides
+      setSpecCompliant(this.specCompliant);
    }
 }

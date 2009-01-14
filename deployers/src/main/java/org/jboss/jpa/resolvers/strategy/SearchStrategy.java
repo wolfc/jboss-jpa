@@ -19,20 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jpa.resolvers;
+package org.jboss.jpa.resolvers.strategy;
 
-import org.jboss.beans.metadata.api.annotations.Inject;
-import org.jboss.jpa.resolvers.strategy.JBossSearchStrategy;
+import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.jpa.resolvers.PersistenceUnitDependencyResolver;
 
 /**
+ * Allow for different methods to find persistence units.
+ * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class InterApplicationPersistenceUnitDependencyResolver extends BasePersistenceUnitDependencyResolver
+public interface SearchStrategy
 {
-   @Inject
-   public void setSearchStrategy(JBossSearchStrategy strategy)
-   {
-      super.setSearchStrategy(strategy);
-   }
+   /**
+    * Find the persistence unit supplier bean given a persistence unit name.
+    * 
+    * @param resolver the resolver which we're working on behalf of
+    * @param deploymentUnit the deployment unit that has a persistence unit reference
+    * @param persistenceUnitName the (relative) name of a persistence unit or null for the default persistence unit
+    * @return the bean name of the persistence unit or null if not found
+    */
+   String findPersistenceUnitSupplier(PersistenceUnitDependencyResolver resolver, DeploymentUnit deploymentUnit, String persistenceUnitName);
 }

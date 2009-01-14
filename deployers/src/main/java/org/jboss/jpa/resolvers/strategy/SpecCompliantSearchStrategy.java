@@ -19,20 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jpa.resolvers;
+package org.jboss.jpa.resolvers.strategy;
 
-import org.jboss.beans.metadata.api.annotations.Inject;
-import org.jboss.jpa.resolvers.strategy.JBossSearchStrategy;
 
 /**
+ * The spec compliant persistence unit search stragegy.
+ * 
+ * See EJB 3.0 6.2.2.
+ * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class InterApplicationPersistenceUnitDependencyResolver extends BasePersistenceUnitDependencyResolver
+public class SpecCompliantSearchStrategy extends BaseSearchStrategy
 {
-   @Inject
-   public void setSearchStrategy(JBossSearchStrategy strategy)
-   {
-      super.setSearchStrategy(strategy);
-   }
 }

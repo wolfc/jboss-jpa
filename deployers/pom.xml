@@ -69,6 +69,12 @@
       <artifactId>jboss-metadata</artifactId>
       <version>1.0.0.CR1</version>
     </dependency>
+    <!-- For @JMX -->
+    <dependency>
+      <groupId>org.jboss.microcontainer</groupId>
+      <artifactId>jboss-aop-mc-int</artifactId>
+      <version>2.0.0.CR2</version>
+    </dependency>
     <dependency>
       <groupId>org.jboss.naming</groupId>
       <artifactId>jnpserver</artifactId>

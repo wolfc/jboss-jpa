@@ -34,6 +34,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.jpa.deployers.PersistenceParsingDeployer;
 import org.jboss.jpa.deployers.test.common.SimpleJavaEEModuleInformer;
 import org.jboss.jpa.resolvers.DefaultPersistenceUnitDependencyResolver;
+import org.jboss.jpa.resolvers.strategy.SpecCompliantSearchStrategy;
 import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
@@ -54,6 +55,7 @@ public class DefaultPersistenceUnitDependencyResolverTestCase
    {
       resolver = new DefaultPersistenceUnitDependencyResolver();
       resolver.setJavaEEModuleInformer(new SimpleJavaEEModuleInformer());
+      resolver.setSearchStrategy(new SpecCompliantSearchStrategy());
       
       String common = "/org/jboss/jpa/deployers/test";
       URL url = DefaultPersistenceUnitDependencyResolverTestCase.class.getResource(common);

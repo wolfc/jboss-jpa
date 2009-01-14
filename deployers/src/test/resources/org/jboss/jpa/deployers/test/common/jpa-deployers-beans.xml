@@ -4,6 +4,8 @@
    
    <bean name="JavaEEModuleInformer" class="org.jboss.jpa.deployers.test.common.SimpleJavaEEModuleInformer"/>
    
+   <bean name="SpecCompliantSearchStrategy" class="org.jboss.jpa.resolvers.strategy.SpecCompliantSearchStrategy"/>
+   
    <bean name="PersistenceUnitDependencyResolver" class="org.jboss.jpa.resolvers.DefaultPersistenceUnitDependencyResolver"/>
    
    <!-- Do not use this one in a JavaEE environment -->
