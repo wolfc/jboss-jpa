@@ -22,6 +22,7 @@
 package org.jboss.jpa.deployers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -68,7 +69,9 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
       props.putAll(defaultPersistenceProperties);
       
       // Add properties from metadata
-      Map<String, String> metadataProps = metaData.getProperties();
+      Map<String, String> metadataProps = metaData.getProperties() != null
+            ? metaData.getProperties()
+            : new HashMap<String, String>();
       props.putAll(metadataProps);
       
       if (!props.containsKey("jboss.no.implicit.datasource.dependency"))
