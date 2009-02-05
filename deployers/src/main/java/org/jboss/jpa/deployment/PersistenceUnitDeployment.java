@@ -265,23 +265,8 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
 
       VirtualFile root = getPersistenceUnitRoot();
       log.debug("Persistence root: " + root);
-      // TODO - update this with VFSUtils helper method
       // hack the JPA url
-      URL url = root.toURL();
-      // is not nested, so direct VFS URL is not an option
-      if (VFSUtils.isNestedFile(root) == false)
-      {
-         String urlString = url.toExternalForm();
-         if (urlString.startsWith("vfs"))
-         {
-            // treat vfszip as file
-            if (urlString.startsWith("vfszip"))
-               url = new URL("file" + urlString.substring(6));
-            else
-               url = new URL(urlString.substring(3)); // (vfs)file and (vfs)jar are ok
-         }
-      }
-      
+      URL url = VFSUtils.getCompatibleURL(root);
       PersistenceUnitInfoImpl pi = new PersistenceUnitInfoImpl(metaData, props, di.getClassLoader(), url, jarFiles, initialContext);
 
       if (explicitEntityClasses.size() > 0)
