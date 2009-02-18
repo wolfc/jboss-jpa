@@ -1,0 +1,18 @@
+<projectDescription>
+  <name>jboss-jpa-mcint</name>
+  <comment>The JBoss Container Managed JPA MicroContainer Integration for using
+    JPA persistence units within MC Beans.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+    <buildCommand>
+      <name>org.maven.ide.eclipse.maven2Builder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>org.maven.ide.eclipse.maven2Nature</nature>
+  </natures>
+</projectDescription>
