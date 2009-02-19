@@ -68,9 +68,25 @@ public abstract class PersistenceTestCase
       deploy(url);
    }
    
+   protected void deploy(String root, String deploymentName) throws DeploymentException, IOException 
+   {
+      URL url = getClass().getResource(root);
+      if(url == null)
+         throw new IllegalArgumentException("Can't find resource '" + root + "'");
+      deploy(url, deploymentName);
+   }
+   
    protected static void deploy(URL url) throws DeploymentException, IOException
    {
       VirtualFile file = VFS.getRoot(url);
+      VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
+      delegate.getMainDeployer().deploy(deployment);      
+   }
+   
+   protected static void deploy(URL rootURL, String deploymentName) throws DeploymentException, IOException
+   {
+      VFS context = VFS.getVFS(rootURL);
+      VirtualFile file = context.getRoot().getChild(deploymentName);
       VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
       delegate.getMainDeployer().deploy(deployment);      
    }

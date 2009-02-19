@@ -1,4 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<!--
+  vi:ts=2:sw=2:expandtab:
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.jpa</groupId>
     <artifactId>jboss-jpa-build</artifactId>
@@ -17,6 +22,10 @@
     See EJB 3 JPA chapter 6 and 7.
   </description>
   
+  <properties>
+    <version.org.jboss.deployers>2.2.0-SNAPSHOT</version.org.jboss.deployers>
+  </properties>
+
   <dependencies>
     <!-- For 'mocking' a TransactionManager we use JBossTS -->
     <dependency>
@@ -54,15 +63,15 @@
       <version>1.0.5.GA</version>
       <scope>test</scope>
     </dependency>
-  	<dependency>
+    <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs</artifactId>
-      <version>2.0.0.CR2</version>
+      <version>${version.org.jboss.deployers}</version>
     </dependency>
-  	<dependency>
+    <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <version>2.0.0.CR2</version>
+      <version>${version.org.jboss.deployers}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.metadata</groupId>

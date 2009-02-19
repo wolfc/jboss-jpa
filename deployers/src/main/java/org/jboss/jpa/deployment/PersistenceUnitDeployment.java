@@ -195,8 +195,13 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       {
          try
          {
-            URL url = di.getFile("").toURL();
-            return new URL(url, jar);
+            VirtualFile deploymentUnitFile = di.getFile("");
+            VirtualFile parent = deploymentUnitFile.getParent();
+            VirtualFile baseDir = (parent != null ? parent : deploymentUnitFile);
+            VirtualFile jarFile = baseDir.getChild(jar);
+            if(jarFile == null)
+               throw new RuntimeException("could not find child '" + jar + "' on '" + baseDir + "'");
+            return jarFile.toURL();
          }
          catch (Exception e1)
          {
