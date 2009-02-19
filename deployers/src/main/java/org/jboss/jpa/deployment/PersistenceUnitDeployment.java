@@ -306,13 +306,13 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       if (entityManagerJndiName != null)
       {
          EntityManager injectedManager = new TransactionScopedEntityManager(managedFactory);
-         NonSerializableFactory.rebind(initialContext, entityManagerJndiName, injectedManager);
+         NonSerializableFactory.rebind(initialContext, entityManagerJndiName, injectedManager, true);
       }
       String entityManagerFactoryJndiName = (String) props.get("jboss.entity.manager.factory.jndi.name");
       if (entityManagerFactoryJndiName != null)
       {
          EntityManagerFactory injectedFactory = new InjectedEntityManagerFactory(managedFactory);
-         NonSerializableFactory.rebind(initialContext, entityManagerFactoryJndiName, injectedFactory);
+         NonSerializableFactory.rebind(initialContext, entityManagerFactoryJndiName, injectedFactory, true);
       }
    }
 

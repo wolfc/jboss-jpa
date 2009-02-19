@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+   <persistence-unit name="ejbthree1685">
+      <jta-data-source>java:/DefaultDS</jta-data-source>
+      <class>org.jboss.jpa.deployers.test.common.Person</class>
+      <properties>
+          <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+          <property name="jboss.entity.manager.jndi.name" value="JndiEM"/>
+          <property name="jboss.entity.manager.factory.jndi.name" value="JndiEMF"/>
+          <property name="jboss.entity.manager.jndi.name" value="em-path1/JndiEM"/>
+          <property name="jboss.entity.manager.factory.jndi.name" value="existing-path/JndiEMF"/>
+          <property name="hibernate.session_factory_name" value="sf-path1/sf-path2/JndiSF"/>
+      </properties>
+   </persistence-unit>
+</persistence>

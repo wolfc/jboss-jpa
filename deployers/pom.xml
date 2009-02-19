@@ -119,5 +119,12 @@
       <scope>test</scope>
     </dependency>
     
+    <!-- jboss-common-core (For JNDI Utils) -->
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-common-core</artifactId>
+      <version>2.2.11-SNAPSHOT</version>
+    </dependency>
+    
   </dependencies>
 </project>
