@@ -23,7 +23,7 @@
   </description>
   
   <properties>
-    <version.org.jboss.deployers>2.2.0-SNAPSHOT</version.org.jboss.deployers>
+    <version.org.jboss.deployers>2.0.5.GA</version.org.jboss.deployers>
   </properties>
 
   <dependencies>
