@@ -24,7 +24,7 @@ package org.jboss.jpa.deployers;
 import java.util.List;
 
 import org.jboss.deployers.spi.deployer.helpers.AbstractComponentDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.spi.deployer.helpers.AbstractDeploymentVisitor;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
@@ -36,6 +36,7 @@ import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
  */
 public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMetaData, PersistenceUnitMetaData>
 {
+   @SuppressWarnings("unused")
    private static final Logger log = Logger.getLogger(PersistenceDeployer.class);
    
    public PersistenceDeployer()
@@ -48,8 +49,25 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
       setDeploymentVisitor(new PersistenceDeploymentVisitor());
    }
 
-   private class PersistenceDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceMetaData, PersistenceUnitMetaData>
+   private class PersistenceDeploymentVisitor extends AbstractDeploymentVisitor<PersistenceUnitMetaData, PersistenceMetaData>
    {
+      @Override
+      protected String getComponentName(PersistenceUnitMetaData component)
+      {
+          // we should be OK with this name, as I don't expect multiple PUMDs with same name on same DU?
+          String pumdName = component.getName();
+          if (pumdName == null)
+             throw new IllegalStateException("Persistence unit is unnamed in " + component);
+          
+          return PersistenceUnitMetaData.class.getName() + "." + pumdName;
+      }
+      
+      @Override
+      protected Class<PersistenceUnitMetaData> getComponentType()
+      {
+         return PersistenceUnitMetaData.class;
+      }
+      
       public Class<PersistenceMetaData> getVisitorType()
       {
          return PersistenceMetaData.class;
@@ -59,17 +77,6 @@ public class PersistenceDeployer extends AbstractComponentDeployer<PersistenceMe
       protected List<PersistenceUnitMetaData> getComponents(PersistenceMetaData deployment)
       {
          return deployment.getPersistenceUnits();
-      }
-
-      @Override
-      protected String getName(DeploymentUnit unit, PersistenceUnitMetaData component)
-      {
-         // we should be OK with this name, as I don't expect multiple PUMDs with same name on same DU?
-         String pumdName = component.getName();
-         if (pumdName == null)
-            throw new IllegalStateException("Persistence unit is unnamed in " + unit);
-         
-         return PersistenceUnitMetaData.class.getName() + "." + pumdName;
       }
    }
 }
