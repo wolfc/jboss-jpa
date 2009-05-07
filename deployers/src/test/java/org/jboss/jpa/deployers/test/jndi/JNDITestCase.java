@@ -21,6 +21,8 @@
  */
 package org.jboss.jpa.deployers.test.jndi;
 
+import static org.junit.Assert.fail;
+
 import javax.naming.InitialContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -33,6 +35,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
+ * @author <a href="mailto:proteus400@gmail.com">Matt C</a>
  * @version $Revision: $
  */
 public class JNDITestCase extends PersistenceTestCase
@@ -41,37 +44,66 @@ public class JNDITestCase extends PersistenceTestCase
    public static void beforeClass() throws Exception
    {
       PersistenceTestCase.beforeClass();
-      
+
       deploy(JNDITestCase.class.getResource("/org/jboss/jpa/deployers/test/jndi"));
    }
-   
+
    @Test
    public void testEM() throws Exception
    {
       InitialContext ctx = new InitialContext();
       TransactionManager tm = (TransactionManager) ctx.lookup("java:/TransactionManager");
-      EntityManager em = (EntityManager) ctx.lookup("JndiEM");
-      tm.begin();
-      try
+      EntityManager em = null;
+      try 
       {
-         Person p = new Person();
-         p.setName("Debby");
-         em.persist(p);
+         em = (EntityManager) ctx.lookup("JndiEM");
+      } 
+      catch(Exception e) 
+      {
+         fail("EntityManager lookup test failed");
       }
-      finally
+      try 
       {
-         tm.rollback();
+         tm.begin();
+         try
+         {
+            Person p = new Person();
+            p.setName("Debby");
+            em.persist(p);
+         }
+         finally
+         {
+            tm.rollback();
+         }
+      } 
+      catch(Exception e)
+      {
+         fail("EntityManager invocation test failed");
       }
    }
-   
+
    @Test
    public void testEMF() throws Exception
    {
       InitialContext ctx = new InitialContext();
-      EntityManagerFactory emf = (EntityManagerFactory) ctx.lookup("JndiEMF");
-      EntityManager em = emf.createEntityManager();
-      Person p = new Person();
-      p.setName("Debby");
-      em.persist(p);
+      EntityManagerFactory emf = null;
+      try
+      {
+         emf = (EntityManagerFactory) ctx.lookup("JndiEMF");
+      } catch(Exception e) 
+      {
+         fail("EntityManagerFactory lookup test failed");
+      }
+      try
+      {
+         EntityManager em = emf.createEntityManager();
+         Person p = new Person();
+         p.setName("Debby");
+         em.persist(p);
+      }
+      catch(Exception e) 
+      {
+         fail("EntityManagerFactory invocation test failed");
+      }
    }
 }
