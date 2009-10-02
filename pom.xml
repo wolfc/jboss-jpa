@@ -24,7 +24,7 @@
 
   <profiles>
     <profile>
-      <id>JPA-1.0></id>
+      <id>JPA-1.0</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
