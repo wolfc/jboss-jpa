@@ -32,22 +32,25 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
+import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.util.ThreadLocalStack;
 import org.jboss.logging.Logger;
 import org.jboss.tm.TransactionLocal;
 import org.jboss.tm.TxUtils;
 
 /**
+ * 
  * @author <a href="mailto:gavine@hibernate.org">Gavin King</a>
  * @version $Revision$
  */
+// TODO: move functionality to PersistenceUnitDeployment
+@Deprecated
 public class ManagedEntityManagerFactory
 {
    private static final Logger log = Logger.getLogger(ManagedEntityManagerFactory.class);
 
-   protected EntityManagerFactory entityManagerFactory;
    protected TransactionLocal session = new TransactionLocal();
-   protected String kernelName;
+   private PersistenceUnit persistenceUnit;
 
    public static ThreadLocalStack<Map<ManagedEntityManagerFactory, EntityManager>> nonTxStack = new ThreadLocalStack<Map<ManagedEntityManagerFactory, EntityManager>>();
 
@@ -66,31 +69,30 @@ public class ManagedEntityManagerFactory
       
       if (em == null)
       {
-         em = entityManagerFactory.createEntityManager();
+         em = getEntityManagerFactory().createEntityManager();
          map.put(this, em);
       }
       return em;
    }
 
-   public ManagedEntityManagerFactory(EntityManagerFactory sf, String kernelName)
+   protected ManagedEntityManagerFactory(PersistenceUnit persistenceUnit)
    {
-      this.entityManagerFactory = sf;
-      this.kernelName = kernelName;
+      this.persistenceUnit = persistenceUnit;
    }
 
    public EntityManagerFactory getEntityManagerFactory()
    {
-      return entityManagerFactory;
+      return persistenceUnit.getContainerEntityManagerFactory();
    }
 
    public String getKernelName()
    {
-      return kernelName;
+      return persistenceUnit.getName();
    }
 
    public void destroy()
    {
-      entityManagerFactory.close();
+      throw new RuntimeException("JPA-15: do not call");
    }
 
    private static class SessionSynchronization implements Synchronization
@@ -192,8 +194,11 @@ public class ManagedEntityManagerFactory
 
    public EntityManager createEntityManager()
    {
-      return entityManagerFactory.createEntityManager();
+      return getEntityManagerFactory().createEntityManager();
    }
 
-
+   public PersistenceUnit getPersistenceUnit()
+   {
+      return persistenceUnit;
+   }
 }

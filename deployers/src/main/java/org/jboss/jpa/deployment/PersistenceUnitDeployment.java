@@ -40,6 +40,7 @@ import javax.persistence.spi.PersistenceProvider;
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.jpa.impl.deployment.PersistenceUnitInfoImpl;
 import org.jboss.jpa.injection.InjectedEntityManagerFactory;
 import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
@@ -164,7 +165,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    
    public EntityManagerFactory getContainerEntityManagerFactory()
    {
-      return getManagedFactory().getEntityManagerFactory();
+      return actualFactory;
    }
    
    public String getEntityManagerName()
@@ -210,10 +211,20 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       }
    }
    
+   public EntityManager getTransactionScopedEntityManager()
+   {
+      return managedFactory.getTransactionScopedEntityManager();
+   }
+   
    public XPCResolver getXPCResolver()
    {
       assert xpcResolver != null : "xpcResolver is null in " + this;  
       return xpcResolver;
+   }
+   
+   public boolean isInTx()
+   {
+      return managedFactory.isInTx();
    }
    
    @Inject
@@ -300,7 +311,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
       actualFactory = pp.createContainerEntityManagerFactory(pi, null);
 
-      managedFactory = new ManagedEntityManagerFactory(actualFactory, kernelName);
+      managedFactory = new ManagedEntityManagerFactory(this);
 
       String entityManagerJndiName = (String) props.get("jboss.entity.manager.jndi.name");
       if (entityManagerJndiName != null)
@@ -330,12 +341,17 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       {
          unbind(entityManagerFactoryJndiName);
       }
-      managedFactory.destroy();
+      actualFactory.close();
    }
    
    private void unbind(String name) throws NamingException
    {
       NonSerializableFactory.unbind(name);
       initialContext.unbind(name);
+   }
+   
+   public void verifyInTx()
+   {
+      managedFactory.verifyInTx();
    }
 }

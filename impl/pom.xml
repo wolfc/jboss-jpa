@@ -60,5 +60,10 @@
       <artifactId>jboss-logging-spi</artifactId>
       <version>2.1.0.GA</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.metadata</groupId>
+      <artifactId>jboss-metadata</artifactId>
+      <version>1.0.1.GA</version>
+    </dependency>
   </dependencies>
 </project>

@@ -115,6 +115,13 @@ public class MockRegionFactory implements RegionFactory
          this.name = name;
       }
       
+      // new since JPA-2
+      public boolean contains(Object arg0)
+      {
+         // no-op
+         return false;
+      }
+      
       public void evict(Object arg0) throws CacheException
       {
          // no-op

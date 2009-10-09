@@ -21,18 +21,7 @@
  */
 package org.jboss.jpa.injection;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
 import org.jboss.jpa.deployment.ManagedEntityManagerFactory;
-import org.jboss.jpa.tx.TransactionScopedEntityManager;
-import org.jboss.jpa.util.ManagedEntityManagerFactoryHelper;
 
 /**
  * Comment
@@ -40,66 +29,15 @@ import org.jboss.jpa.util.ManagedEntityManagerFactoryHelper;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class InjectedEntityManagerFactory implements EntityManagerFactory, Externalizable
+@Deprecated
+public class InjectedEntityManagerFactory extends org.jboss.jpa.impl.injection.InjectedEntityManagerFactory
 {
    private static final long serialVersionUID = -3734435119658196788L;
-   
-   private transient EntityManagerFactory delegate;
-   private transient ManagedEntityManagerFactory managedFactory;
    
    public InjectedEntityManagerFactory() {}
 
    public InjectedEntityManagerFactory(ManagedEntityManagerFactory managedFactory)
    {
-      assert managedFactory != null : "managedFactory is null";
-      
-      this.delegate = managedFactory.getEntityManagerFactory();
-      this.managedFactory = managedFactory;
-   }
-
-
-   public EntityManagerFactory getDelegate()
-   {
-      return delegate;
-   }
-
-   public void writeExternal(ObjectOutput out) throws IOException
-   {
-      out.writeUTF(managedFactory.getKernelName());
-   }
-
-   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-   {
-      String kernelName = in.readUTF();
-      managedFactory = ManagedEntityManagerFactoryHelper.getManagedEntityManagerFactory(kernelName);
-      if(managedFactory == null)
-         throw new IOException("Unable to find persistence unit in registry: " + kernelName);
-      delegate = managedFactory.getEntityManagerFactory();
-   }
-
-   public EntityManager createEntityManager()
-   {
-      return getDelegate().createEntityManager();
-   }
-
-   public EntityManager createEntityManager(Map map)
-   {
-      return delegate.createEntityManager(map);
-   }
-
-
-   public EntityManager getEntityManager()
-   {
-      return new TransactionScopedEntityManager(managedFactory);
-   }
-
-   public void close()
-   {
-      throw new IllegalStateException("It is illegal to close an injected EntityManagerFactory");
-   }
-
-   public boolean isOpen()
-   {
-      return getDelegate().isOpen();
+      super(managedFactory.getPersistenceUnit());
    }
 }
