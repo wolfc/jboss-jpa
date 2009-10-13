@@ -35,11 +35,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
 
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.jpa.builder.CEMFBuilder;
 import org.jboss.jpa.impl.deployment.PersistenceUnitInfoImpl;
 import org.jboss.jpa.injection.InjectedEntityManagerFactory;
 import org.jboss.jpa.spi.PersistenceUnit;
@@ -72,6 +72,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    protected String kernelName;
    protected PersistenceDeployment deployment;
    private Properties defaultPersistenceProperties;
+   private CEMFBuilder cemfBuilder;
    private XPCResolver xpcResolver;
 
    public PersistenceUnitDeployment(InitialContext initialContext, PersistenceDeployment deployment, List<String> explicitEntityClasses, PersistenceUnitMetaData metadata, String kernelName, VFSDeploymentUnit deploymentUnit, Properties defaultPersistenceProperties)
@@ -228,6 +229,12 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    }
    
    @Inject
+   public void setCEMFBuilder(CEMFBuilder builder)
+   {
+      this.cemfBuilder = builder;
+   }
+   
+   @Inject
    public void setXPCResolver(XPCResolver xpcResolver)
    {
       // Do not check for null, because MC does uninstall with null
@@ -293,8 +300,6 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
          pi.setManagedClassnames(classes);
       }
       
-      Class<?> providerClass = Thread.currentThread().getContextClassLoader().loadClass(pi.getPersistenceProviderClassName());
-
       // EJBTHREE-893
       if(!pi.getProperties().containsKey("hibernate.session_factory_name"))
       {
@@ -308,8 +313,7 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
          pi.getProperties().setProperty("hibernate.cache.region_prefix", kernelName);
       }
       
-      PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
-      actualFactory = pp.createContainerEntityManagerFactory(pi, null);
+      actualFactory = cemfBuilder.build(di, pi);
 
       managedFactory = new ManagedEntityManagerFactory(this);
 
