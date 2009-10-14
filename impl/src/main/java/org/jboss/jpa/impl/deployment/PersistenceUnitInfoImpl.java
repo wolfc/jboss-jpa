@@ -31,6 +31,8 @@ import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.persistence.Caching;
+import javax.persistence.ValidationMode;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
@@ -295,4 +297,21 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       this.excludeClasses = excludeClasses;
    }
 
+   public Caching getCaching()
+   {
+      // TODO Auto-generated method stub
+      throw new RuntimeException("NYI");
+   }
+   
+   public ValidationMode getValidationMode()
+   {
+      // TODO Auto-generated method stub
+      throw new RuntimeException("NYI");
+   }
+   
+   public String PersistenceXMLSchemaVersion()
+   {
+      // TODO Auto-generated method stub
+      throw new RuntimeException("NYI");
+   }
 }

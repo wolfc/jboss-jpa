@@ -27,20 +27,17 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 
 import org.hibernate.ejb.HibernatePersistence;
+import org.jboss.jpa.impl.AbstractEntityManagerFactoryDelegator;
 import org.jboss.jpa.impl.deployment.PersistenceUnitInfoImpl;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
@@ -56,7 +53,7 @@ import org.jboss.metadata.jpa.spec.TransactionType;
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  * @version $Revision: $
  */
-public class RemotelyInjectEntityManagerFactory implements EntityManagerFactory, Serializable
+public class RemotelyInjectEntityManagerFactory extends AbstractEntityManagerFactoryDelegator implements EntityManagerFactory, Serializable
 {
    private static final Logger log = Logger.getLogger(RemotelyInjectEntityManagerFactory.class);
    
@@ -111,20 +108,17 @@ public class RemotelyInjectEntityManagerFactory implements EntityManagerFactory,
       }
       */
       
+      // TODO: BeanValidation
       PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
       actualFactory = pp.createContainerEntityManagerFactory(pi, null);      
    }
    
-   public EntityManager createEntityManager()
+   @Override
+   protected EntityManagerFactory getDelegate()
    {
-      return actualFactory.createEntityManager();
+      return actualFactory;
    }
-
-   public EntityManager createEntityManager(@SuppressWarnings("unchecked") Map map)
-   {
-      return actualFactory.createEntityManager(map);
-   }
-
+   
    protected String getJaccContextId()
    {
       //return di.getSimpleName();
@@ -195,11 +189,6 @@ public class RemotelyInjectEntityManagerFactory implements EntityManagerFactory,
       }
    }
    
-   private static List<String> safeList(Set<String> set)
-   {
-      return (set == null || set.isEmpty()) ? Collections.<String>emptyList() : new ArrayList<String>(set);
-   }
-
    private void writeObject(ObjectOutputStream out) throws IOException
    {
       log.trace("writeObject");

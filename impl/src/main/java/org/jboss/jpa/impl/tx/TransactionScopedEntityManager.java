@@ -25,12 +25,19 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.QueryBuilder;
+import javax.persistence.metamodel.Metamodel;
 
 import org.hibernate.Session;
 import org.hibernate.ejb.HibernateEntityManager;
@@ -84,6 +91,21 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
       if ( persistenceUnit == null ) throw new IOException( "Unable to find persistence unit in registry: " + kernelName );
    }
 
+   /**
+    * EJB 3.0 Persistence 5.6.1:
+    * If the entity manager is invoked outside the scope of a transaction, any entities loaded from the database
+    * will immediately become detached at the end of the method call.
+    */
+   private void detachEntitiesIfNoTx(EntityManager em)
+   {
+      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+   }
+   
+   private void verifyInTx()
+   {
+      persistenceUnit.verifyInTx();
+   }
+   
    public Object getDelegate()
    {
       return getEntityManager().getDelegate();
@@ -91,7 +113,7 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
 
    public void joinTransaction()
    {
-      persistenceUnit.verifyInTx();
+      verifyInTx();
       getEntityManager().joinTransaction();
    }
 
@@ -107,21 +129,21 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
 
    public void lock(Object entity, LockModeType lockMode)
    {
-      persistenceUnit.verifyInTx();
+      verifyInTx();
       getEntityManager().lock(entity, lockMode);
    }
 
    public <T> T getReference(Class<T> entityClass, Object primaryKey)
    {
       EntityManager em = getEntityManager();
-      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+      detachEntitiesIfNoTx(em);
       try
       {
          return em.getReference(entityClass, primaryKey);
       }
       finally
       {
-         if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+         detachEntitiesIfNoTx(em);
       }
    }
 
@@ -133,73 +155,73 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
    public Query createQuery(String ejbqlString)
    {
       EntityManager em = getEntityManager();
-      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+      detachEntitiesIfNoTx(em);
       return em.createQuery(ejbqlString);
    }
 
    public Query createNamedQuery(String name)
    {
       EntityManager em = getEntityManager();
-      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+      detachEntitiesIfNoTx(em);
       return em.createNamedQuery(name);
    }
 
    public Query createNativeQuery(String sqlString)
    {
       EntityManager em = getEntityManager();
-      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+      detachEntitiesIfNoTx(em);
       return em.createNativeQuery(sqlString);
    }
 
    public Query createNativeQuery(String sqlString, Class resultClass)
    {
       EntityManager em = getEntityManager();
-      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+      detachEntitiesIfNoTx(em);
       return em.createNativeQuery(sqlString, resultClass);
    }
 
    public Query createNativeQuery(String sqlString, String resultSetMapping)
    {
       EntityManager em = getEntityManager();
-      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+      detachEntitiesIfNoTx(em);
       return em.createNativeQuery(sqlString, resultSetMapping);
    }
 
    public <A> A find(Class<A> entityClass, Object primaryKey)
    {
       EntityManager em = getEntityManager();
-      if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+      detachEntitiesIfNoTx(em);
       try
       {
          return em.find(entityClass, primaryKey);
       }
       finally
       {
-         if (!persistenceUnit.isInTx()) em.clear(); // em will be closed by interceptor
+         detachEntitiesIfNoTx(em);
       }
    }
 
    public void persist(Object entity)
    {
-      persistenceUnit.verifyInTx();
+      verifyInTx();
       getEntityManager().persist(entity);
    }
 
    public <A> A merge(A entity)
    {
-      persistenceUnit.verifyInTx();
+      verifyInTx();
       return (A) getEntityManager().merge(entity);
    }
 
    public void remove(Object entity)
    {
-      persistenceUnit.verifyInTx();
+      verifyInTx();
       getEntityManager().remove(entity);
    }
 
    public void refresh(Object entity)
    {
-      persistenceUnit.verifyInTx();
+      verifyInTx();
       getEntityManager().refresh(entity);
    }
 
@@ -210,7 +232,7 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
 
    public void flush()
    {
-      persistenceUnit.verifyInTx();
+      verifyInTx();
       getEntityManager().flush();
    }
 
@@ -241,4 +263,136 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
       return persistenceUnit.getTransactionScopedEntityManager();
    }
 
+   public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass)
+   {
+      EntityManager em = getEntityManager();
+      detachEntitiesIfNoTx(em);
+      return em.createNamedQuery(name, resultClass);
+   }
+
+   public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery)
+   {
+      EntityManager em = getEntityManager();
+      detachEntitiesIfNoTx(em);
+      return em.createQuery(criteriaQuery);
+   }
+
+   public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass)
+   {
+      EntityManager em = getEntityManager();
+      detachEntitiesIfNoTx(em);
+      return em.createQuery(qlString, resultClass);
+   }
+
+   public void detach(Object entity)
+   {
+      getEntityManager().detach(entity);
+   }
+
+   public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode)
+   {
+      EntityManager em = getEntityManager();
+      detachEntitiesIfNoTx(em);
+      try
+      {
+         return em.find(entityClass, primaryKey, lockMode);
+      }
+      finally
+      {
+         detachEntitiesIfNoTx(em);
+      }
+   }
+
+   public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties)
+   {
+      EntityManager em = getEntityManager();
+      detachEntitiesIfNoTx(em);
+      try
+      {
+         return em.find(entityClass, primaryKey, lockMode, properties);
+      }
+      finally
+      {
+         detachEntitiesIfNoTx(em);
+      }
+   }
+
+   public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties)
+   {
+      EntityManager em = getEntityManager();
+      detachEntitiesIfNoTx(em);
+      try
+      {
+         return em.find(entityClass, primaryKey, properties);
+      }
+      finally
+      {
+         detachEntitiesIfNoTx(em);
+      }
+   }
+
+   public EntityManagerFactory getEntityManagerFactory()
+   {
+      return getEntityManager().getEntityManagerFactory();
+   }
+
+   public LockModeType getLockMode(Object entity)
+   {
+      verifyInTx();
+      return getEntityManager().getLockMode(entity);
+   }
+
+   public Metamodel getMetamodel()
+   {
+      return getEntityManager().getMetamodel();
+   }
+
+   public Map<String, Object> getProperties()
+   {
+      return getEntityManager().getProperties();
+   }
+
+   public QueryBuilder getQueryBuilder()
+   {
+      return getEntityManager().getQueryBuilder();
+   }
+
+   public Set<String> getSupportedProperties()
+   {
+      return getEntityManager().getSupportedProperties();
+   }
+
+   public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties)
+   {
+      verifyInTx();
+      getEntityManager().lock(entity, lockMode, properties);
+   }
+
+   public void refresh(Object entity, Map<String, Object> properties)
+   {
+      verifyInTx();
+      getEntityManager().refresh(entity, properties);
+   }
+
+   public void refresh(Object entity, LockModeType lockMode)
+   {
+      verifyInTx();
+      getEntityManager().refresh(entity, lockMode);
+   }
+
+   public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties)
+   {
+      verifyInTx();
+      getEntityManager().refresh(entity, lockMode, properties);
+   }
+
+   public void setProperty(String propertyName, Object value)
+   {
+      getEntityManager().setProperty(propertyName, value);
+   }
+
+   public <T> T unwrap(Class<T> cls)
+   {
+      return getEntityManager().unwrap(cls);
+   }
 }

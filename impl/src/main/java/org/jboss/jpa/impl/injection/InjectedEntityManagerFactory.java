@@ -25,12 +25,10 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.Map;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.jboss.jpa.impl.tx.TransactionScopedEntityManager;
+import org.jboss.jpa.impl.AbstractEntityManagerFactoryDelegator;
 import org.jboss.jpa.spi.PersistenceUnit;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
 
@@ -40,7 +38,7 @@ import org.jboss.jpa.spi.PersistenceUnitRegistry;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class InjectedEntityManagerFactory implements EntityManagerFactory, Externalizable
+public class InjectedEntityManagerFactory extends AbstractEntityManagerFactoryDelegator implements EntityManagerFactory, Externalizable
 {
    private static final long serialVersionUID = 1L;
    
@@ -57,7 +55,7 @@ public class InjectedEntityManagerFactory implements EntityManagerFactory, Exter
       this.persistenceUnit = persistenceUnit;
    }
 
-
+   @Override
    public EntityManagerFactory getDelegate()
    {
       return delegate;
@@ -77,29 +75,8 @@ public class InjectedEntityManagerFactory implements EntityManagerFactory, Exter
       delegate = persistenceUnit.getContainerEntityManagerFactory();
    }
 
-   public EntityManager createEntityManager()
-   {
-      return getDelegate().createEntityManager();
-   }
-
-   @SuppressWarnings("unchecked")
-   public EntityManager createEntityManager(Map map)
-   {
-      return delegate.createEntityManager(map);
-   }
-   
-   public EntityManager getEntityManager()
-   {
-      return new TransactionScopedEntityManager(persistenceUnit);
-   }
-
    public void close()
    {
       throw new IllegalStateException("It is illegal to close an injected EntityManagerFactory");
-   }
-
-   public boolean isOpen()
-   {
-      return getDelegate().isOpen();
    }
 }
