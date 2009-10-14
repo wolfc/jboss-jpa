@@ -36,7 +36,7 @@ public class PersistenceUnitRegistry
 
    public static void register(PersistenceUnit container)
    {
-      if (persistenceUnits.contains(container.getName())) throw new RuntimeException("Persistence Unit is already registered: " + container.getName());
+      if (persistenceUnits.containsKey(container.getName())) throw new RuntimeException("Persistence Unit is already registered: " + container.getName());
       persistenceUnits.put(container.getName(), container);
    }
 
