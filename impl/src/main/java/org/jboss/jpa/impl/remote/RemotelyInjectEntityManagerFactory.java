@@ -30,14 +30,19 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.InitialContext;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.validation.ValidatorFactory;
+import javax.validation.Validation;
 
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.jpa.impl.AbstractEntityManagerFactoryDelegator;
+import org.jboss.jpa.impl.JPAConstants;
 import org.jboss.jpa.impl.deployment.PersistenceUnitInfoImpl;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
@@ -51,6 +56,7 @@ import org.jboss.metadata.jpa.spec.TransactionType;
  * up JPA locally.
  * 
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
+ * @author Emmanuel Bernard
  * @version $Revision: $
  */
 public class RemotelyInjectEntityManagerFactory extends AbstractEntityManagerFactoryDelegator implements EntityManagerFactory, Serializable
@@ -107,10 +113,16 @@ public class RemotelyInjectEntityManagerFactory extends AbstractEntityManagerFac
          pi.getProperties().put("hibernate.session_factory_name", kernelName);
       }
       */
-      
-      // TODO: BeanValidation
+
       PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
+      Map<Object, Object> properties = new HashMap<Object, Object>(1);
+      properties.put( JPAConstants.BEAN_VALIDATION_FACTORY, getValidatorFactory() );
       actualFactory = pp.createContainerEntityManagerFactory(pi, null);      
+   }
+
+   private ValidatorFactory getValidatorFactory() {
+      //FIXME get it from JNDI or the deployer
+      return Validation.buildDefaultValidatorFactory();
    }
    
    @Override

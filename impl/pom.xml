@@ -46,6 +46,19 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.0.0.GA</version>
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>1.0.0.GA</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
       <version>3.5.0.Beta-1</version>
     </dependency>
@@ -86,7 +99,13 @@
     <dependency>
       <groupId>org.jboss.metadata</groupId>
       <artifactId>jboss-metadata</artifactId>
-      <version>1.0.1.GA</version>
+      <version>1.0.2.Beta2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>ejb3-persistence</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.naming</groupId>

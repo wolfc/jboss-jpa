@@ -23,6 +23,7 @@ package org.jboss.jpa.impl.test.common;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
 
 /**
  * A generic entity with an id and a string for testing.
@@ -37,6 +38,7 @@ public class Person
    private int id;
    
    private String name;
+   private String nickname;
 
    @Override
    public boolean equals(Object obj)
@@ -86,5 +88,16 @@ public class Person
    public void setName(String name)
    {
       this.name = name;
+   }
+
+   @Size(min=2, max=5)
+   public String getNickname()
+   {
+      return nickname;
+   }
+
+   public void setNickname(String nickname)
+   {
+      this.nickname = nickname;
    }
 }

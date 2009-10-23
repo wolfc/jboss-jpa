@@ -42,11 +42,13 @@ import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.metadata.jpa.spec.TransactionType;
+import org.jboss.metadata.jpa.spec.SharedCacheMode;
 
 /**
  * Comment
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
+ * @author Emmanuel Bernard
  * @version $Revision$
  */
 public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
@@ -65,6 +67,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
    private PersistenceUnitTransactionType transactionType;
    private URL persistenceUnitRootUrl;
    private boolean excludeClasses;
+   private ValidationMode validationMode;
+   private Caching caching;
+   private String persistenceXMLSchemaVersion;
 
    public PersistenceUnitInfoImpl()
    {
@@ -97,6 +102,10 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       this.setPersistenceUnitRootUrl(persistenceUnitRootUrl);
       PersistenceUnitTransactionType transactionType = getJPATransactionType(metaData);
       this.setTransactionType(transactionType);
+      this.setCaching( convertToCaching( metaData.getSharedCacheMode() ) );
+      this.setValidationMode( convertToValidationMode( metaData.getValidationMode() ) );
+      //FIXME set appropriate version when accessible from metadata
+      this.setPersistenceXMLSchemaVersion( null);
 
       if (metaData.getProvider() != null) this.setPersistenceProviderClassName(metaData.getProvider());
       /*
@@ -143,7 +152,37 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       }
       */
    }
-   
+
+   private ValidationMode convertToValidationMode(org.jboss.metadata.jpa.spec.ValidationMode validationMode)
+   {
+      switch (validationMode) {
+         case AUTO:
+            return ValidationMode.AUTO;
+         case CALLBACK:
+            return ValidationMode.CALLBACK;
+         case NONE:
+            return ValidationMode.NONE;
+         default:
+            return null;
+      }
+   }
+
+   private Caching convertToCaching(SharedCacheMode sharedCacheMode)
+   {
+      switch (sharedCacheMode) {
+         case ALL:
+            return Caching.ALL;
+         case DISABLE_SELECTIVE:
+            return Caching.DISABLE_SELECTIVE;
+         case ENABLE_SELECTIVE:
+            return Caching.ENABLE_SELECTIVE;
+         case NONE:
+            return Caching.NONE;
+         default:
+            return null;
+      }
+   }
+
    public void addTransformer(ClassTransformer transformer)
    {
       //throw new RuntimeException("NOT IMPLEMENTED");
@@ -297,21 +336,39 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       this.excludeClasses = excludeClasses;
    }
 
-   public Caching getCaching()
-   {
-      // TODO Auto-generated method stub
-      throw new RuntimeException("NYI");
-   }
-   
    public ValidationMode getValidationMode()
    {
-      // TODO Auto-generated method stub
-      throw new RuntimeException("NYI");
+      return validationMode;
    }
-   
+
+   public void setValidationMode(ValidationMode validationMode)
+   {
+      this.validationMode = validationMode;
+   }
+
+   public Caching getCaching()
+   {
+      return caching;
+   }
+
+   public void setCaching(Caching caching)
+   {
+      this.caching = caching;
+   }
+
+   public String getPersistenceXMLSchemaVersion()
+   {
+      return persistenceXMLSchemaVersion;
+   }
+
+   //TODO remove once typo is fixed in JPA API
    public String PersistenceXMLSchemaVersion()
    {
-      // TODO Auto-generated method stub
-      throw new RuntimeException("NYI");
+      return persistenceXMLSchemaVersion;
+   }
+
+   public void setPersistenceXMLSchemaVersion(String persistenceXMLSchemaVersion)
+   {
+      this.persistenceXMLSchemaVersion = persistenceXMLSchemaVersion;
    }
 }
