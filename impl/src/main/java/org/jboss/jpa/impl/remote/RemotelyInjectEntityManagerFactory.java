@@ -43,6 +43,7 @@ import javax.validation.Validation;
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.jpa.impl.AbstractEntityManagerFactoryDelegator;
 import org.jboss.jpa.impl.JPAConstants;
+import org.jboss.jpa.impl.beanvalidation.ValidatorFactoryProvider;
 import org.jboss.jpa.impl.deployment.PersistenceUnitInfoImpl;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
@@ -116,13 +117,8 @@ public class RemotelyInjectEntityManagerFactory extends AbstractEntityManagerFac
 
       PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
       Map<Object, Object> properties = new HashMap<Object, Object>(1);
-      properties.put( JPAConstants.BEAN_VALIDATION_FACTORY, getValidatorFactory() );
+      properties.put( JPAConstants.BEAN_VALIDATION_FACTORY, new ValidatorFactoryProvider().getValidatorFactory() );
       actualFactory = pp.createContainerEntityManagerFactory(pi, properties);      
-   }
-
-   private ValidatorFactory getValidatorFactory() {
-      //FIXME get it from JNDI or the deployer
-      return Validation.buildDefaultValidatorFactory();
    }
    
    @Override
