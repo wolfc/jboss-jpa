@@ -117,7 +117,7 @@ public class RemotelyInjectEntityManagerFactory extends AbstractEntityManagerFac
       PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
       Map<Object, Object> properties = new HashMap<Object, Object>(1);
       properties.put( JPAConstants.BEAN_VALIDATION_FACTORY, getValidatorFactory() );
-      actualFactory = pp.createContainerEntityManagerFactory(pi, null);      
+      actualFactory = pp.createContainerEntityManagerFactory(pi, properties);      
    }
 
    private ValidatorFactory getValidatorFactory() {
