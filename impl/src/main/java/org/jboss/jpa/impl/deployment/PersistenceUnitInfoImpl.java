@@ -41,8 +41,8 @@ import javax.sql.DataSource;
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
-import org.jboss.metadata.jpa.spec.TransactionType;
 import org.jboss.metadata.jpa.spec.SharedCacheMode;
+import org.jboss.metadata.jpa.spec.TransactionType;
 
 /**
  * Comment
@@ -169,6 +169,8 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
 
    private Caching convertToCaching(SharedCacheMode sharedCacheMode)
    {
+      if(sharedCacheMode == null) return null;
+      
       switch (sharedCacheMode) {
          case ALL:
             return Caching.ALL;
