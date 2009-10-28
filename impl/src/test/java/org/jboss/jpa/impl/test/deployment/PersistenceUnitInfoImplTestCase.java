@@ -24,6 +24,7 @@ package org.jboss.jpa.impl.test.deployment;
 import static junit.framework.Assert.assertNull;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -58,7 +59,7 @@ public class PersistenceUnitInfoImplTestCase
       Properties props = new Properties();
       ClassLoader classLoader = null;
       URL persistenceUnitRootUrl = null;
-      List<URL> jarFiles = null;
+      List<URL> jarFiles = new ArrayList<URL>();
       Context ctx = new BrainlessContext() {
          @Override
          public Object lookup(String name) throws NamingException
