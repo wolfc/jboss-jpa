@@ -70,4 +70,28 @@ public class PersistenceUnitInfoImplTestCase
       PersistenceUnitInfoImpl puii = new PersistenceUnitInfoImpl(metaData, props, classLoader, persistenceUnitRootUrl, jarFiles, ctx);
       assertNull(puii.getCaching());
    }
+
+   /**
+    * If I don't specify validation mode I don't want a NPE.
+    */
+   @Test
+   public void testUnspecifiedValidationMode() throws Exception
+   {
+      PersistenceUnitMetaData metaData = new PersistenceUnitMetaData();
+      metaData.setJtaDataSource("dummy-datasource");
+      metaData.setName("dummy-name");
+      Properties props = new Properties();
+      ClassLoader classLoader = null;
+      URL persistenceUnitRootUrl = null;
+      List<URL> jarFiles = new ArrayList<URL>();
+      Context ctx = new BrainlessContext() {
+         @Override
+         public Object lookup(String name) throws NamingException
+         {
+            return null;
+         }
+      };
+      PersistenceUnitInfoImpl puii = new PersistenceUnitInfoImpl(metaData, props, classLoader, persistenceUnitRootUrl, jarFiles, ctx);
+      assertNull(puii.getValidationMode());
+   }
 }

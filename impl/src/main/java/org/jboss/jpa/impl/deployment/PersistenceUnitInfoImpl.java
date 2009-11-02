@@ -155,6 +155,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
 
    private ValidationMode convertToValidationMode(org.jboss.metadata.jpa.spec.ValidationMode validationMode)
    {
+      // JBJPA-15 / JBAS-7417: if no validation mode is specified return null
+      if(validationMode == null) return null;
+      
       switch (validationMode) {
          case AUTO:
             return ValidationMode.AUTO;
@@ -169,6 +172,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
 
    private Caching convertToCaching(SharedCacheMode sharedCacheMode)
    {
+      // JBJPA-15: if no caching mode is specified return null
       if(sharedCacheMode == null) return null;
       
       switch (sharedCacheMode) {
