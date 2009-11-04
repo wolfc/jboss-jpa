@@ -36,7 +36,6 @@ import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.QueryBuilder;
 import javax.persistence.metamodel.Metamodel;
 
 import org.hibernate.Session;
@@ -352,14 +351,9 @@ public class TransactionScopedEntityManager implements EntityManager, Externaliz
       return getEntityManager().getProperties();
    }
 
-   public QueryBuilder getQueryBuilder()
+   public javax.persistence.criteria.CriteriaBuilder getCriteriaBuilder()
    {
-      return getEntityManager().getQueryBuilder();
-   }
-
-   public Set<String> getSupportedProperties()
-   {
-      return getEntityManager().getSupportedProperties();
+      return getEntityManager().getCriteriaBuilder();
    }
 
    public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties)

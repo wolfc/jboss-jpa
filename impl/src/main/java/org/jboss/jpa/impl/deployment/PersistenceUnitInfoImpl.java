@@ -31,8 +31,8 @@ import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.persistence.Caching;
 import javax.persistence.ValidationMode;
+import javax.persistence.SharedCacheMode;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
@@ -41,7 +41,6 @@ import javax.sql.DataSource;
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
-import org.jboss.metadata.jpa.spec.SharedCacheMode;
 import org.jboss.metadata.jpa.spec.TransactionType;
 
 /**
@@ -68,8 +67,8 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
    private URL persistenceUnitRootUrl;
    private boolean excludeClasses;
    private ValidationMode validationMode;
-   private Caching caching;
    private String persistenceXMLSchemaVersion;
+   private SharedCacheMode sharedCacheMode;
 
    public PersistenceUnitInfoImpl()
    {
@@ -102,11 +101,10 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       this.setPersistenceUnitRootUrl(persistenceUnitRootUrl);
       PersistenceUnitTransactionType transactionType = getJPATransactionType(metaData);
       this.setTransactionType(transactionType);
-      this.setCaching( convertToCaching( metaData.getSharedCacheMode() ) );
       this.setValidationMode( convertToValidationMode( metaData.getValidationMode() ) );
       //FIXME set appropriate version when accessible from metadata
       this.setPersistenceXMLSchemaVersion( null);
-
+      this.setSharedCacheMode(getSharedCacheMode(metaData.getSharedCacheMode()));
       if (metaData.getProvider() != null) this.setPersistenceProviderClassName(metaData.getProvider());
       /*
       if (explicitEntityClasses.size() > 0)
@@ -153,6 +151,21 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       */
    }
 
+   private SharedCacheMode getSharedCacheMode(org.jboss.metadata.jpa.spec.SharedCacheMode mode)
+   {
+      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.ALL)
+         return SharedCacheMode.ALL;
+      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.DISABLE_SELECTIVE)
+          return SharedCacheMode.DISABLE_SELECTIVE;
+      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.ENABLE_SELECTIVE)
+         return SharedCacheMode.ENABLE_SELECTIVE;
+      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.NONE)
+         return SharedCacheMode.NONE;
+      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.UNSPECIFIED)
+         return SharedCacheMode.UNSPECIFIED;
+      return null;
+   }
+
    private ValidationMode convertToValidationMode(org.jboss.metadata.jpa.spec.ValidationMode validationMode)
    {
       // JBJPA-15 / JBAS-7417: if no validation mode is specified return null
@@ -165,25 +178,6 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
             return ValidationMode.CALLBACK;
          case NONE:
             return ValidationMode.NONE;
-         default:
-            return null;
-      }
-   }
-
-   private Caching convertToCaching(SharedCacheMode sharedCacheMode)
-   {
-      // JBJPA-15: if no caching mode is specified return null
-      if(sharedCacheMode == null) return null;
-      
-      switch (sharedCacheMode) {
-         case ALL:
-            return Caching.ALL;
-         case DISABLE_SELECTIVE:
-            return Caching.DISABLE_SELECTIVE;
-         case ENABLE_SELECTIVE:
-            return Caching.ENABLE_SELECTIVE;
-         case NONE:
-            return Caching.NONE;
          default:
             return null;
       }
@@ -352,14 +346,14 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       this.validationMode = validationMode;
    }
 
-   public Caching getCaching()
+   public SharedCacheMode getSharedCacheMode()
    {
-      return caching;
+      return sharedCacheMode;
    }
 
-   public void setCaching(Caching caching)
+   public void setSharedCacheMode(SharedCacheMode sharedCacheMode)
    {
-      this.caching = caching;
+      this.sharedCacheMode = sharedCacheMode;
    }
 
    public String getPersistenceXMLSchemaVersion()

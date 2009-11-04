@@ -68,7 +68,7 @@ public class PersistenceUnitInfoImplTestCase
          }
       };
       PersistenceUnitInfoImpl puii = new PersistenceUnitInfoImpl(metaData, props, classLoader, persistenceUnitRootUrl, jarFiles, ctx);
-      assertNull(puii.getCaching());
+		assertNull(puii.getSharedCacheMode());
    }
 
    /**

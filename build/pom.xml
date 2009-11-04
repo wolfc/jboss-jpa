@@ -134,8 +134,8 @@
       <properties>
         <JPA.groupId>org.hibernate.persistence</JPA.groupId>
         <JPA.artifactId>jpa-api</JPA.artifactId>
-        <JPA.version>2.0.Beta-20090815</JPA.version>
-        <version.org.hibernate.hibernate-entitymanager>3.5.0.Beta-1</version.org.hibernate.hibernate-entitymanager>
+        <JPA.version>2.0-cr-1</JPA.version>
+        <version.org.hibernate.hibernate-entitymanager>3.5.0-Beta-2</version.org.hibernate.hibernate-entitymanager>
       </properties>
     </profile>
   </profiles>

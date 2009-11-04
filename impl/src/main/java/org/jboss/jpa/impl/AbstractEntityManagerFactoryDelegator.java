@@ -28,7 +28,6 @@ import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
-import javax.persistence.criteria.QueryBuilder;
 import javax.persistence.metamodel.Metamodel;
 
 /**
@@ -71,14 +70,9 @@ public abstract class AbstractEntityManagerFactoryDelegator implements EntityMan
       return getDelegate().getProperties();
    }
 
-   public QueryBuilder getQueryBuilder()
+   public javax.persistence.criteria.CriteriaBuilder getCriteriaBuilder()
    {
-      return getDelegate().getQueryBuilder();
-   }
-
-   public Set<String> getSupportedProperties()
-   {
-      return getDelegate().getSupportedProperties();
+      return getDelegate().getCriteriaBuilder();
    }
 
    public boolean isOpen()
