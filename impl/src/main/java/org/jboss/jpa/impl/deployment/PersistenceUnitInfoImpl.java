@@ -153,17 +153,22 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
 
    private SharedCacheMode getSharedCacheMode(org.jboss.metadata.jpa.spec.SharedCacheMode mode)
    {
-      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.ALL)
-         return SharedCacheMode.ALL;
-      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.DISABLE_SELECTIVE)
-          return SharedCacheMode.DISABLE_SELECTIVE;
-      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.ENABLE_SELECTIVE)
-         return SharedCacheMode.ENABLE_SELECTIVE;
-      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.NONE)
-         return SharedCacheMode.NONE;
-      if (mode == org.jboss.metadata.jpa.spec.SharedCacheMode.UNSPECIFIED)
-         return SharedCacheMode.UNSPECIFIED;
-      return null;
+      if(mode == null) return null;
+      
+      switch(mode) {
+         case ALL:
+            return SharedCacheMode.ALL;
+         case DISABLE_SELECTIVE:
+             return SharedCacheMode.DISABLE_SELECTIVE;
+         case ENABLE_SELECTIVE:
+            return SharedCacheMode.ENABLE_SELECTIVE;
+         case NONE:
+            return SharedCacheMode.NONE;
+         case UNSPECIFIED:
+            return SharedCacheMode.UNSPECIFIED;
+         default:
+            return null;
+      }
    }
 
    private ValidationMode convertToValidationMode(org.jboss.metadata.jpa.spec.ValidationMode validationMode)
