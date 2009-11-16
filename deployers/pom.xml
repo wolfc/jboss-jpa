@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jboss-jpa-deployers</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA Deployers</name>
   <description>
@@ -74,12 +74,12 @@
     <dependency>
       <groupId>org.jboss.jpa</groupId>
       <artifactId>jboss-jpa-impl</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.jpa</groupId>
       <artifactId>jboss-jpa-spi</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
       <!-- TODO: we should really use the right jpa-spi -->
       <exclusions>
         <exclusion>
@@ -148,4 +148,10 @@
     </dependency>
     
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/jpa/tags/jboss-jpa-deployers-1.0.1</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/jpa/tags/jboss-jpa-deployers-1.0.1</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jpa/tags/jboss-jpa-deployers-1.0.1</url>
+  </scm>
 </project>
