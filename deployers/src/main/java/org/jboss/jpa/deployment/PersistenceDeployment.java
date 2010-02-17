@@ -203,7 +203,7 @@ public class PersistenceDeployment //extends ServiceMBeanSupport
             metaData.setProperties(properties);
          }         
          
-         PersistenceUnitDeployment deployment = new PersistenceUnitDeployment(initialContext, this, explicitEntityClasses, metaData, "wrong-kernel-name", getDeploymentUnit(), null);
+         PersistenceUnitDeployment deployment = PersistenceUnitDeploymentFactory.getInstance().create(initialContext, this, explicitEntityClasses, metaData, "wrong-kernel-name", getDeploymentUnit(), null);
          PersistenceUnitRegistry.register(deployment);
          persistenceUnitDeployments.add(deployment);
       }

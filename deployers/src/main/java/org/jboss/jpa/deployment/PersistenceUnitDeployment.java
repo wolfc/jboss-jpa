@@ -21,8 +21,6 @@
  */
 package org.jboss.jpa.deployment;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,8 +47,6 @@ import org.jboss.jpa.tx.TransactionScopedEntityManager;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.util.naming.NonSerializableFactory;
-import org.jboss.virtual.VFSUtils;
-import org.jboss.virtual.VirtualFile;
 
 /**
  * Comment
@@ -58,7 +54,7 @@ import org.jboss.virtual.VirtualFile;
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @version $Revision$
  */
-public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
+public abstract class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    implements PersistenceUnit
 {
    private static final Logger log = Logger.getLogger(PersistenceUnitDeployment.class);
@@ -145,24 +141,11 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
    }
 
    /**
-    * Find the persistence unit root, which can be the root of a jar
+    * Find the persistence unit URL, which can be the root of a jar
     * or WEB-INF/classes of a war.
-    * @return the persistence unit root
+    * @return the persistence unit ULR
     */
-   protected VirtualFile getPersistenceUnitRoot()
-   {
-      // FIXME: What is the correct way to find the persistence unit root?
-      try
-      {
-         VirtualFile metaData = di.getMetaDataFile("persistence.xml");
-         assert metaData != null : "Can't find persistence.xml in " + di;
-         return metaData.getParent().getParent();
-      }
-      catch(IOException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
+   protected abstract URL getPersistenceUnitURL();
    
    public EntityManagerFactory getContainerEntityManagerFactory()
    {
@@ -187,30 +170,8 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
       return (properties != null) ? properties : Collections.<String, String>emptyMap();
    }
 
-   private URL getRelativeURL(String jar)
-   {
-      try
-      {
-         return new URL(jar);
-      }
-      catch (MalformedURLException e)
-      {
-         try
-         {
-            VirtualFile deploymentUnitFile = di.getFile("");
-            VirtualFile parent = deploymentUnitFile.getParent();
-            VirtualFile baseDir = (parent != null ? parent : deploymentUnitFile);
-            VirtualFile jarFile = baseDir.getChild(jar);
-            if(jarFile == null)
-               throw new RuntimeException("could not find child '" + jar + "' on '" + baseDir + "'");
-            return jarFile.toURL();
-         }
-         catch (Exception e1)
-         {
-            throw new RuntimeException("could not find relative path: " + jar, e1);
-         }
-      }
-   }
+   protected abstract URL getRelativeURL(String jar);
+
    
    public EntityManager getTransactionScopedEntityManager()
    {
@@ -286,10 +247,8 @@ public class PersistenceUnitDeployment //extends AbstractJavaEEComponent
          }
       }
 
-      VirtualFile root = getPersistenceUnitRoot();
-      log.debug("Persistence root: " + root);
-      // hack the JPA url
-      URL url = VFSUtils.getCompatibleURL(root);
+      URL url = getPersistenceUnitURL();
+      log.debug("Persistence url: " + url);
       PersistenceUnitInfoImpl pi = new PersistenceUnitInfoImpl(metaData, props, di.getClassLoader(), url, jarFiles, initialContext);
 
       if (explicitEntityClasses.size() > 0)

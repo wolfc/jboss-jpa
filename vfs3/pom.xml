@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jboss.jpa</groupId>
+    <artifactId>jboss-jpa-build</artifactId>
+    <relativePath>../build/pom.xml</relativePath>
+    <version>1.0.1</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jboss-jpa-vfs3</artifactId>
+  <version>1.0.2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>JBoss Container Managed JPA VFS3 Integration</name>
+  <description>
+    Integration project to support VFS3.
+  </description>
+  
+  <properties>
+    <version.org.jboss.jpa-deployers>1.0.2-SNAPSHOT</version.org.jboss.jpa-deployers>
+    <version.org.jboss.vfs>3.0.0.CR1</version.org.jboss.vfs>
+    <version.org.jboss.deployers>2.2.0.Alpha2</version.org.jboss.deployers>
+  </properties>
+
+  <dependencies>
+    <dependency>
+	  <groupId>org.jboss.jpa</groupId>
+      <artifactId>jboss-jpa-deployers</artifactId>
+      <version>${version.org.jboss.jpa-deployers}</version>
+    </dependency>
+    <dependency>
+	  <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
+      <version>${version.org.jboss.vfs}</version>
+    </dependency>
+    <dependency>
+	  <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-vfs</artifactId>
+      <version>${version.org.jboss.deployers}</version>
+    </dependency>
+    <dependency>
+	  <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-vfs-spi</artifactId>
+      <version>${version.org.jboss.deployers}</version>
+    </dependency>
+  </dependencies>
+</project>

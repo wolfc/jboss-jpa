@@ -39,6 +39,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractSimpleRealDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
+import org.jboss.jpa.deployment.PersistenceUnitDeploymentFactory;
 import org.jboss.jpa.resolvers.DataSourceDependencyResolver;
 import org.jboss.jpa.resolvers.PersistenceUnitDependencyResolver;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
@@ -109,7 +110,7 @@ public class PersistenceUnitDeployer extends AbstractSimpleRealDeployer<Persiste
          InitialContext initialContext = new InitialContext();
          List<String> explicitEntityClasses = new ArrayList<String>();
          VFSDeploymentUnit deploymentUnit = (VFSDeploymentUnit) unit.getParent();
-         PersistenceUnitDeployment pu = new PersistenceUnitDeployment(initialContext, null, explicitEntityClasses, metaData, name, deploymentUnit, defaultPersistenceProperties);
+         PersistenceUnitDeployment pu = PersistenceUnitDeploymentFactory.getInstance().create(initialContext, null, explicitEntityClasses, metaData, name, deploymentUnit, defaultPersistenceProperties);
          
          AbstractBeanMetaData beanMetaData = new AbstractBeanMetaData(name, PersistenceUnitDeployment.class.getName());
          BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanMetaData);
