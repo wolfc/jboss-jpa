@@ -67,7 +67,7 @@ public class PersistenceUnitDeploymentImpl extends PersistenceUnitDeployment
       try {
          VirtualFile metaData = di.getMetaDataFile("persistence.xml");
          assert metaData != null : "Can't find persistence.xml in " + di;
-         return metaData.getParent().getParent().toURL();
+         return metaData.getParent().getParent().getPhysicalFile().toURI().toURL(); // Hack, but needed for the way Hibernate looks for classes in Jar..
       }
       catch (Exception e) {
          throw new RuntimeException(e);
@@ -89,7 +89,7 @@ public class PersistenceUnitDeploymentImpl extends PersistenceUnitDeployment
             VirtualFile jarFile = baseDir.getChild(jar);
             if (jarFile == null)
                throw new RuntimeException("could not find child '" + jar + "' on '" + baseDir + "'");
-            return jarFile.toURL();
+            return jarFile.getPhysicalFile().toURI().toURL();  // Hack, but needed for the way Hibernate looks for classes in Jar..
          }
          catch (Exception e1) {
             throw new RuntimeException("could not find relative path: " + jar, e1);
