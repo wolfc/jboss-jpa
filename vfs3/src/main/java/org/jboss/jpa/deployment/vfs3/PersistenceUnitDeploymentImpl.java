@@ -1,4 +1,5 @@
 /*
+
  * JBoss, Home of Professional Open Source
  * Copyright 2009, JBoss Inc., and individual contributors as indicated
  * by the @authors tag. See the copyright.txt in the distribution for a
@@ -21,6 +22,7 @@
  */
 package org.jboss.jpa.deployment.vfs3;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -33,6 +35,8 @@ import org.jboss.jpa.deployment.PersistenceDeployment;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.vfs.VirtualFile;
+import org.jboss.vfs.VirtualFileVisitor;
+import org.jboss.vfs.VisitorAttributes;
 
 /**
  * Instance of PersistenceUnitDeployment that uses VFS2 roots 
@@ -67,7 +71,7 @@ public class PersistenceUnitDeploymentImpl extends PersistenceUnitDeployment
       try {
          VirtualFile metaData = di.getMetaDataFile("persistence.xml");
          assert metaData != null : "Can't find persistence.xml in " + di;
-         return metaData.getParent().getParent().getPhysicalFile().toURI().toURL(); // Hack, but needed for the way Hibernate looks for classes in Jar..
+         return getJarFileUrl(metaData.getParent().getParent());
       }
       catch (Exception e) {
          throw new RuntimeException(e);
@@ -89,12 +93,45 @@ public class PersistenceUnitDeploymentImpl extends PersistenceUnitDeployment
             VirtualFile jarFile = baseDir.getChild(jar);
             if (jarFile == null)
                throw new RuntimeException("could not find child '" + jar + "' on '" + baseDir + "'");
-            return jarFile.getPhysicalFile().toURI().toURL();  // Hack, but needed for the way Hibernate looks for classes in Jar..
+            return getJarFileUrl(jarFile);
          }
          catch (Exception e1) {
             throw new RuntimeException("could not find relative path: " + jar, e1);
          }
       }
+   }
+   
+   /**
+    * This method is a hack.  This should be replace with a hook in VFS to fully explode a 
+    * zip filesystem.  Better yet, this should be removed once there is a way to inject a VFS 
+    * based JarScanner into hibernate.
+    */
+   private URL getJarFileUrl(VirtualFile virtualFile) throws MalformedURLException, IOException {
+      if(virtualFile.isDirectory()) 
+      {
+         VirtualFileVisitor visitor = new VirtualFileVisitor() 
+         {
+            public void visit(VirtualFile virtualFile)
+            {
+               try 
+               {
+                  virtualFile.getPhysicalFile();
+               }
+               catch (IOException e) 
+               {
+                  throw new RuntimeException("Failed to force explosion of VirtualFile: " + virtualFile, e);
+               }
+            }
+            
+            public VisitorAttributes getAttributes()
+            {
+               return VisitorAttributes.RECURSE_LEAVES_ONLY;
+            }
+         };
+         virtualFile.visit(visitor);
+         return virtualFile.getPhysicalFile().toURI().toURL();
+      }
+      return virtualFile.toURL();
    }
 
 }
