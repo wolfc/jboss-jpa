@@ -54,12 +54,12 @@ public abstract class PersistenceUnitDeploymentFactory
          factory = factoryIterator.next();
          if(factoryIterator.hasNext())
          {
-            throw new RuntimeException("More the one factories found, please ensure only one factory implementation is found on the classpath.");
+            throw new RuntimeException("More the one service found found for " + PersistenceUnitDeploymentFactory.class + ", please ensure only one factory implementation is found on the classpath.  (JBJPA-21)");
          }
       }
       else 
       {
-         throw new RuntimeException("No factories found");
+         throw new RuntimeException("No service found for " + PersistenceUnitDeploymentFactory.class + " (JBJPA-21)");
       }
       
       return factory;
