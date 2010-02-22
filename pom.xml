@@ -20,6 +20,8 @@
   <modules>
     <module>build</module>
     <module>deployers</module>
+    <module>vfs2</module>
+    <module>vfs3</module>
     <module>impl</module>
     <module>spi</module>
   </modules>
