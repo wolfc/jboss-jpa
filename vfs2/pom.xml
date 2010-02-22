@@ -15,7 +15,7 @@
   </description>
   
   <properties>
-    <version.org.jboss.jpa-deployers>1.0.2-SNAPSHOT</version.org.jboss.jpa-deployers>
+    <version.org.jboss.jpa-deployers>1.0.2-alpha-1</version.org.jboss.jpa-deployers>
     <version.org.jboss.vfs>2.2.0.Alpha2</version.org.jboss.vfs>
     <version.org.jboss.deployers>2.2.0.Alpha1</version.org.jboss.deployers>
   </properties>
