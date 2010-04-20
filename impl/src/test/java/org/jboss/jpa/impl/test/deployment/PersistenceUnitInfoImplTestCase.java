@@ -22,7 +22,7 @@
 package org.jboss.jpa.impl.test.deployment;
 
 import static junit.framework.Assert.assertNull;
-
+import static junit.framework.Assert.assertSame;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,7 @@ import javax.naming.NamingException;
 
 import org.jboss.jpa.impl.deployment.PersistenceUnitInfoImpl;
 import org.jboss.jpa.impl.test.common.BrainlessContext;
+import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.metadata.jpa.spec.ValidationMode;
 import org.junit.Test;
@@ -93,5 +94,28 @@ public class PersistenceUnitInfoImplTestCase
       };
       PersistenceUnitInfoImpl puii = new PersistenceUnitInfoImpl(metaData, props, classLoader, persistenceUnitRootUrl, jarFiles, ctx);
       assertNull(puii.getValidationMode());
+   }
+
+   @Test
+   public void testSchemaVersion() throws Exception
+   {
+      PersistenceUnitMetaData metaData = new PersistenceUnitMetaData();
+      metaData.setJtaDataSource("dummy-datasource");
+      metaData.setName("dummy-name");
+      PersistenceMetaData persistenceMetaData = new PersistenceMetaData();
+      persistenceMetaData.setVersion("2.0");
+      Properties props = new Properties();
+      ClassLoader classLoader = null;
+      URL persistenceUnitRootUrl = null;
+      List<URL> jarFiles = new ArrayList<URL>();
+      Context ctx = new BrainlessContext() {
+         @Override
+         public Object lookup(String name) throws NamingException
+         {
+            return null;
+         }
+      };
+      PersistenceUnitInfoImpl puii = new PersistenceUnitInfoImpl(persistenceMetaData, metaData, props, classLoader, persistenceUnitRootUrl, jarFiles, ctx);
+      assertSame("2.0",puii.getPersistenceXMLSchemaVersion());
    }
 }
