@@ -40,7 +40,6 @@ import javax.sql.DataSource;
 
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.logging.Logger;
-import org.jboss.metadata.jpa.spec.PersistenceMetaData;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.metadata.jpa.spec.TransactionType;
 
@@ -78,7 +77,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
    /**
     * Note that the jarFiles in metaData are ignore and should be
     * specified in the jarFiles argument.
-    *
+    * 
     * @param metaData the persistence unit meta data
     * @param props properties for the persistence provider
     * @param classLoader the class loader used for entity class loading
@@ -88,24 +87,6 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
     * @throws NamingException when a data source can't be located
     */
    public PersistenceUnitInfoImpl(PersistenceUnitMetaData metaData, Properties props, ClassLoader classLoader, URL persistenceUnitRootUrl, List<URL> jarFiles, Context ctx) throws NamingException
-   {
-      this(null, metaData, props, classLoader, persistenceUnitRootUrl, jarFiles, ctx);
-   }
-
-   /**
-    * Note that the jarFiles in metaData are ignore and should be
-    * specified in the jarFiles argument.
-    *
-    * @param persistenceMetaData the persistence meta data 
-    * @param metaData the persistence unit meta data
-    * @param props properties for the persistence provider
-    * @param classLoader the class loader used for entity class loading
-    * @param persistenceUnitRootUrl a jar or JarInputStream where the entities are packaged
-    * @param jarFiles a list of URLs pointing to jar or JarInputStreams where entities are packaged
-    * @param ctx naming context for looking up data sources
-    * @throws NamingException when a data source can't be located
-    */
-   public PersistenceUnitInfoImpl(PersistenceMetaData persistenceMetaData, PersistenceUnitMetaData metaData, Properties props, ClassLoader classLoader, URL persistenceUnitRootUrl, List<URL> jarFiles, Context ctx) throws NamingException
    {
       log.debug("Using class loader " + classLoader);
       this.setClassLoader(classLoader);
@@ -121,8 +102,8 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo
       PersistenceUnitTransactionType transactionType = getJPATransactionType(metaData);
       this.setTransactionType(transactionType);
       this.setValidationMode( convertToValidationMode( metaData.getValidationMode() ) );
-      // default to a JPA 1.0 persistence.xml (version must be specified for JPA 2.0 or greater)
-      this.setPersistenceXMLSchemaVersion( persistenceMetaData == null ? "1.0" : persistenceMetaData.getVersion());
+      //FIXME set appropriate version when accessible from metadata
+      this.setPersistenceXMLSchemaVersion( null);
       this.setSharedCacheMode(getSharedCacheMode(metaData.getSharedCacheMode()));
       if (metaData.getProvider() != null) this.setPersistenceProviderClassName(metaData.getProvider());
       /*
