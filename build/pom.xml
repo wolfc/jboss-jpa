@@ -12,7 +12,7 @@
 
   <groupId>org.jboss.jpa</groupId>
   <artifactId>jboss-jpa-build</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>JBoss Container Managed JPA Build</name>
   <description>
@@ -20,9 +20,9 @@
   </description>
 
   <scm>
-    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/jpa/tags/jboss-jpa-build-1.0.2</connection>
-    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/jpa/tags/jboss-jpa-build-1.0.2</developerConnection>
-    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jpa/tags/jboss-jpa-build-1.0.2</url>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/jpa/trunk</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/jpa/trunk</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jpa/trunk/</url>
   </scm>
 
   <distributionManagement>
