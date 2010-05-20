@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.jboss.jpa.spi.PersistenceUnit;
@@ -57,6 +58,22 @@ public class DummyPersistenceUnit implements PersistenceUnit
    public XPCResolver getXPCResolver()
    {
       throw new RuntimeException("NYI");
+   }
+
+   public EntityManager getTransactionScopedEntityManager()
+   {
+      throw new RuntimeException("NYI");
+   }
+
+   public boolean isInTx()
+   {
+      throw new RuntimeException("NYI");
+   }
+
+   public void verifyInTx()
+   {
+      throw new RuntimeException("NYI");
+      
    }
 
 }
