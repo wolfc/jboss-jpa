@@ -25,6 +25,14 @@
     <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jpa/trunk/</url>
   </scm>
 
+  <distributionManagement>
+      <repository>
+        <id>jboss-releases-repository</id>
+        <name>JBoss Releases Repository</name>
+        <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
+      </repository>
+  </distributionManagement>  
+
   <build>
     <outputDirectory>${jpa.outputDirectory}</outputDirectory>
     <testOutputDirectory>${jpa.testOutputDirectory}</testOutputDirectory>
