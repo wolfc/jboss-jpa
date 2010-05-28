@@ -23,6 +23,7 @@ package org.jboss.jpa.mcint.test.annotations.unit;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -45,6 +46,16 @@ public class AnnotationsTestCase
 {
    private static MicroContainerTestHelper delegate;
    
+   /**
+    * basedir (set through Maven)
+    */
+   protected static final File BASEDIR = new File(System.getProperty("basedir"));
+
+   /**
+    * Target directory
+    */
+   protected static final File TARGET_DIRECTORY = new File(BASEDIR, "target");
+   
    @AfterClass
    public static void afterClass() throws Exception
    {
@@ -62,6 +73,17 @@ public class AnnotationsTestCase
       
       delegate.validate();
       
+      // we could have just looked up a jboss-beans.xml through the classloader,
+      // but that wouldn't have guaranteed that the classloader would pick up this 
+      // project's jboss-beans.xml. Hence this java.io.File based approach
+      File jpaMcIntJBossBeansXML = new File(TARGET_DIRECTORY, "classes/META-INF/jboss-beans.xml");
+      if (!jpaMcIntJBossBeansXML.exists())
+      {
+         throw new IllegalStateException("Could not find jboss-beans.xml under target/classes/META-INF of this project");
+      }
+      // deploy our jboss-beans.xml
+      deploy(jpaMcIntJBossBeansXML.toURI().toURL());
+      // now deploy the other test resources 
       deploy("/org/jboss/jpa/mcint/test/annotations");
    }
    
