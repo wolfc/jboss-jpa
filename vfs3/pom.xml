@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jboss-jpa-vfs3</artifactId>
-  <version>1.0.2-alpha-2</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA VFS3 Integration</name>
   <description>
