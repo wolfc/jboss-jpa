@@ -3,11 +3,11 @@
     <groupId>org.jboss.jpa</groupId>
     <artifactId>jboss-jpa-build</artifactId>
     <relativePath>../build/pom.xml</relativePath>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jboss-jpa-vfs3</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2-alpha-2</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA VFS3 Integration</name>
   <description>
