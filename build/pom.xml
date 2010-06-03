@@ -12,7 +12,7 @@
 
   <groupId>org.jboss.jpa</groupId>
   <artifactId>jboss-jpa-build</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>JBoss Container Managed JPA Build</name>
   <description>
