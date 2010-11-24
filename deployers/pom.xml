@@ -22,6 +22,8 @@
   
   <properties>
     <version.org.jboss.deployers>2.0.5.GA</version.org.jboss.deployers>
+    <version.switchboard>1.0.0-alpha-8</version.switchboard>
+    <version.jndi>0.1.5-SNAPSHOT</version.jndi>
   </properties>
 
   <dependencies>
@@ -146,6 +148,24 @@
       <artifactId>jboss-common-core</artifactId>
       <version>2.2.11.GA</version>
     </dependency>
-    
+
+    <dependency>
+        <groupId>org.jboss.switchboard</groupId>
+        <artifactId>jboss-switchboard-mc-spi</artifactId>
+        <version>${version.switchboard}</version>
+    </dependency>
+
+    <!-- switchboard -->
+    <dependency>
+        <groupId>org.jboss.switchboard</groupId>
+        <artifactId>jboss-switchboard-javaee</artifactId>
+        <version>${version.switchboard}</version>
+    </dependency>
+     <dependency>
+         <groupId>org.jboss.ejb3.jndi</groupId>
+         <artifactId>jboss-ejb3-jndi-deployers</artifactId>
+         <version>${version.jndi}</version>
+     </dependency>
+
   </dependencies>
 </project>
