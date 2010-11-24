@@ -23,7 +23,6 @@
   <properties>
     <version.org.jboss.deployers>2.0.5.GA</version.org.jboss.deployers>
     <version.switchboard>1.0.0-alpha-8</version.switchboard>
-    <version.jndi>0.1.5-SNAPSHOT</version.jndi>
   </properties>
 
   <dependencies>
@@ -161,11 +160,7 @@
         <artifactId>jboss-switchboard-javaee</artifactId>
         <version>${version.switchboard}</version>
     </dependency>
-     <dependency>
-         <groupId>org.jboss.ejb3.jndi</groupId>
-         <artifactId>jboss-ejb3-jndi-deployers</artifactId>
-         <version>${version.jndi}</version>
-     </dependency>
+    
 
   </dependencies>
 </project>
