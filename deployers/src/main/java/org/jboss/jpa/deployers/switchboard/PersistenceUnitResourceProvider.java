@@ -39,7 +39,7 @@ import org.jboss.switchboard.spi.Resource;
  */
 public class PersistenceUnitResourceProvider implements MCBasedResourceProvider<PersistenceUnitRefType>
 {
-   private static final Logger LOG = Logger.getLogger(PersistenceUnitResourceProvider.class);
+   private static final Logger log = Logger.getLogger(PersistenceUnitResourceProvider.class);
    private PersistenceUnitDependencyResolver persistenceUnitDependencyResolver;
    private final String persistenceUnitDeploymentMCBeanName;
    /**
@@ -58,7 +58,7 @@ public class PersistenceUnitResourceProvider implements MCBasedResourceProvider<
    public Resource provide(DeploymentUnit deploymentUnit, PersistenceUnitRefType persistenceUnitRefType)
    {
       String lookupName = persistenceUnitRefType.getLookupName();
-      LOG.trace("PersistenceUnitResourceProvider.provide: " + deploymentUnit.getName() + " " + lookupName);
+      log.trace("PersistenceUnitResourceProvider.provide: " + deploymentUnit.getName() + " " + lookupName);
       String persistenceUnitName = persistenceUnitDependencyResolver.createBeanName(deploymentUnit,deploymentUnit.getName());
       return new PersistenceUnitRefResource(persistenceUnitDeploymentMCBeanName, persistenceUnitName);
    }
