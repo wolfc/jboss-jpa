@@ -36,12 +36,10 @@ import org.jboss.switchboard.spi.Resource;
 public class PersistenceUnitRefResource implements Resource
 {
 
-   private final String name;
    private final String persistenceUnitDeploymentMCBeanName;
 
-   public PersistenceUnitRefResource(String persistenceUnitDeploymentMCBeanName, String name)
+   public PersistenceUnitRefResource(String persistenceUnitDeploymentMCBeanName)
    {
-      this.name = name;
       this.persistenceUnitDeploymentMCBeanName = persistenceUnitDeploymentMCBeanName;
    }
 
@@ -54,6 +52,6 @@ public class PersistenceUnitRefResource implements Resource
 
    public Object getTarget()
    {
-      return ((PersistenceUnitDeployment)PersistenceUnitRegistry.getPersistenceUnit(name)).getManagedFactory();
+      return ((PersistenceUnitDeployment)PersistenceUnitRegistry.getPersistenceUnit(persistenceUnitDeploymentMCBeanName)).getManagedFactory();
    }
 }

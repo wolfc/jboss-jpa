@@ -41,15 +41,12 @@ public class PersistenceUnitResourceProvider implements MCBasedResourceProvider<
 {
    private static final Logger log = Logger.getLogger(PersistenceUnitResourceProvider.class);
    private PersistenceUnitDependencyResolver persistenceUnitDependencyResolver;
-   private final String persistenceUnitDeploymentMCBeanName;
    /**
     *
-    * @param persistenceUnitDeploymentMCBeanName The name of PersistenceUnitDeployment MC bean
-    * @param resolver For resolve the PU bean name   
+    * @param resolver For resolving the PU bean name
     */
-   public PersistenceUnitResourceProvider(String persistenceUnitDeploymentMCBeanName, PersistenceUnitDependencyResolver resolver)
+   public PersistenceUnitResourceProvider(PersistenceUnitDependencyResolver resolver)
    {
-      this.persistenceUnitDeploymentMCBeanName = persistenceUnitDeploymentMCBeanName;
       this.persistenceUnitDependencyResolver = resolver;
    }
 
@@ -58,9 +55,10 @@ public class PersistenceUnitResourceProvider implements MCBasedResourceProvider<
    public Resource provide(DeploymentUnit deploymentUnit, PersistenceUnitRefType persistenceUnitRefType)
    {
       String lookupName = persistenceUnitRefType.getLookupName();
-      log.trace("PersistenceUnitResourceProvider.provide: " + deploymentUnit.getName() + " " + lookupName);
       String persistenceUnitName = persistenceUnitDependencyResolver.createBeanName(deploymentUnit,deploymentUnit.getName());
-      return new PersistenceUnitRefResource(persistenceUnitDeploymentMCBeanName, persistenceUnitName);
+      if (log.isTraceEnabled())
+         log.trace("PersistenceUnitResourceProvider.provide: " + deploymentUnit.getName() + ", " + lookupName + ", " + persistenceUnitName);
+      return new PersistenceUnitRefResource(persistenceUnitName);
    }
 
    public Class<PersistenceUnitRefType> getEnvironmentEntryType()
