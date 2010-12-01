@@ -21,6 +21,7 @@
  */
 package org.jboss.jpa.deployers.switchboard;
 
+import org.jboss.jpa.deployment.ManagedEntityManagerFactory;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
 import org.jboss.switchboard.spi.Resource;
@@ -36,22 +37,35 @@ import org.jboss.switchboard.spi.Resource;
 public class PersistenceUnitRefResource implements Resource
 {
 
-   private final String persistenceUnitDeploymentMCBeanName;
+   private final String puSupplier;
 
-   public PersistenceUnitRefResource(String persistenceUnitDeploymentMCBeanName)
+   public PersistenceUnitRefResource(String puSupplier)
    {
-      this.persistenceUnitDeploymentMCBeanName = persistenceUnitDeploymentMCBeanName;
+      if (puSupplier == null)
+      {
+         throw new IllegalArgumentException("Cannot create a PersistenceUnitRefResource for a null persistence unit supplier");
+      }
+      this.puSupplier = puSupplier;
    }
 
+   @Override
    public Object getDependency()
    {
       // We need the PersistenceUnitDeployer MC bean to be started before we can bind
-      // the PersistenceUnitDeployment.getManagedFactory() to JNDI
-      return persistenceUnitDeploymentMCBeanName;
+      // the PersistenceUnitDeployment.getManagedFactory().getEntityManagerFactory() to JNDI
+      return puSupplier;
    }
 
+   @Override
    public Object getTarget()
    {
-      return ((PersistenceUnitDeployment)PersistenceUnitRegistry.getPersistenceUnit(persistenceUnitDeploymentMCBeanName)).getManagedFactory();
+      ManagedEntityManagerFactory managedEntityManagerFactory = ((PersistenceUnitDeployment)PersistenceUnitRegistry.getPersistenceUnit(puSupplier)).getManagedFactory();
+      return managedEntityManagerFactory.getEntityManagerFactory();
+   }
+   
+   @Override
+   public String toString()
+   {
+      return PersistenceUnitRefResource.class.getSimpleName() + "[supplier=" + this.puSupplier + "]";
    }
 }

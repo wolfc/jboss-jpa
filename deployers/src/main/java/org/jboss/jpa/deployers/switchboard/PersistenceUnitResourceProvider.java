@@ -21,7 +21,6 @@
  */
 package org.jboss.jpa.deployers.switchboard;
 
-import org.jboss.beans.metadata.api.annotations.Inject;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.jpa.resolvers.PersistenceUnitDependencyResolver;
 import org.jboss.logging.Logger;
@@ -40,7 +39,12 @@ import org.jboss.switchboard.spi.Resource;
 public class PersistenceUnitResourceProvider implements MCBasedResourceProvider<PersistenceUnitRefType>
 {
    private static final Logger log = Logger.getLogger(PersistenceUnitResourceProvider.class);
+   
+   /**
+    * PU resolver
+    */
    private PersistenceUnitDependencyResolver persistenceUnitDependencyResolver;
+   
    /**
     *
     * @param resolver For resolving the PU bean name
@@ -52,19 +56,30 @@ public class PersistenceUnitResourceProvider implements MCBasedResourceProvider<
 
 
    @Override
-   public Resource provide(DeploymentUnit deploymentUnit, PersistenceUnitRefType persistenceUnitRefType)
+   public Resource provide(DeploymentUnit unit, PersistenceUnitRefType puRef)
    {
-      String lookupName = persistenceUnitRefType.getLookupName();
-      String persistenceUnitName = persistenceUnitDependencyResolver.createBeanName(deploymentUnit,deploymentUnit.getName());
-      if (log.isTraceEnabled())
-         log.trace("PersistenceUnitResourceProvider.provide: " + deploymentUnit.getName() + ", " + lookupName + ", " + persistenceUnitName);
-      return new PersistenceUnitRefResource(persistenceUnitName);
+      // the DU which depends on this persistence-unit-ref 
+      DeploymentUnit dependentDU = unit;
+      // the PersistenceUnitDependencyResolver works on non-component deployment units.
+      // So if we are currently processing component DUs (like we do for EJBs), then pass the
+      // component DUs parent during resolution.
+      if (unit.isComponent())
+      {
+         dependentDU = unit.getParent();
+      }
+      // resolve the PU supplier for the persistence-unit-ref
+      log.debug("Resolving PU supplier for: " + puRef.getPersistenceUnitName() + " in unit " + dependentDU);
+      String puSupplier = persistenceUnitDependencyResolver.resolvePersistenceUnitSupplier(dependentDU, puRef.getPersistenceUnitName());
+      log.debug("Resolved PU supplier: " + puSupplier + " for persistence-unit-ref: " + puRef.getName() + " in unit " + dependentDU);
+      
+      // create a PU ref resource
+      return new PersistenceUnitRefResource(puSupplier);
    }
 
+   @Override
    public Class<PersistenceUnitRefType> getEnvironmentEntryType()
    {
       return PersistenceUnitRefType.class; 
    }
-
 
 }
