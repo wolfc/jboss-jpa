@@ -77,7 +77,7 @@ public class PersistenceContextResourceProvider implements MCBasedResourceProvid
          " in unit " + dependentDU + (extendedPc ? " (extended pc)":""));
       
       // create a PC ref resource
-      return new PersistenceContextRefResource(puSupplier, extendedPc);
+      return new PersistenceContextRefResource(puSupplier, pcRef);
    }
 
    @Override

@@ -24,7 +24,10 @@ package org.jboss.jpa.deployers.switchboard;
 import org.jboss.jpa.deployment.ManagedEntityManagerFactory;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
+import org.jboss.switchboard.javaee.environment.PersistenceContextRefType;
 import org.jboss.switchboard.spi.Resource;
+
+import javax.persistence.PersistenceContextType;
 
 /**
  *
@@ -38,16 +41,16 @@ public class PersistenceContextRefResource implements Resource
 {
 
    private final String puSupplier;
-   private final boolean pcExtendedType;
+   private final PersistenceContextRefType pcRef;
 
-   public PersistenceContextRefResource(String puSupplier, boolean pcExtendedType)
+   public PersistenceContextRefResource(String puSupplier, PersistenceContextRefType pcRef)
    {
       if (puSupplier == null)
       {
          throw new IllegalArgumentException("Cannot create a PersistenceUnitRefResource for a null persistence unit supplier");
       }
       this.puSupplier = puSupplier;
-      this.pcExtendedType = pcExtendedType;
+      this.pcRef = pcRef;
    }
 
    @Override
@@ -61,7 +64,8 @@ public class PersistenceContextRefResource implements Resource
    @Override
    public Object getTarget()
    {
-      if (pcExtendedType)
+      boolean extendedPc = PersistenceContextType.EXTENDED.equals(pcRef.getPersistenceContextType());
+      if (extendedPc)
       {
          // clearly this is wrong, since the non-extended case returns a factory that can be bound.
          // hmm, I wonder if the else case already has the knowledge to return a factory that later returns
@@ -78,6 +82,7 @@ public class PersistenceContextRefResource implements Resource
    @Override
    public String toString()
    {
-      return PersistenceContextRefResource.class.getSimpleName() + (pcExtendedType?"(extendedPC)":"")+"[supplier=" + this.puSupplier + "]";
+      boolean extendedPc = PersistenceContextType.EXTENDED.equals(pcRef.getPersistenceContextType());
+      return PersistenceContextRefResource.class.getSimpleName() + (extendedPc?"(extendedPC)":"")+"[supplier=" + this.puSupplier + "]";
    }
 }
