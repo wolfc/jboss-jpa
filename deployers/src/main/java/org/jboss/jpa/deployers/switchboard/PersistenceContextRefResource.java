@@ -21,13 +21,15 @@
  */
 package org.jboss.jpa.deployers.switchboard;
 
+import java.util.Collection;
+
+import javax.persistence.PersistenceContextType;
+
 import org.jboss.jpa.deployment.ManagedEntityManagerFactory;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
 import org.jboss.switchboard.javaee.environment.PersistenceContextRefType;
 import org.jboss.switchboard.spi.Resource;
-
-import javax.persistence.PersistenceContextType;
 
 /**
  *
@@ -85,4 +87,11 @@ public class PersistenceContextRefResource implements Resource
       boolean extendedPc = PersistenceContextType.EXTENDED.equals(pcRef.getPersistenceContextType());
       return PersistenceContextRefResource.class.getSimpleName() + (extendedPc?"(extendedPC)":"")+"[supplier=" + this.puSupplier + "]";
    }
+   
+   @Override
+   public Collection<?> getInvocationDependencies()
+   {
+      return null;
+   }
+
 }

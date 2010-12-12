@@ -21,6 +21,8 @@
  */
 package org.jboss.jpa.deployers.switchboard;
 
+import java.util.Collection;
+
 import org.jboss.jpa.deployment.ManagedEntityManagerFactory;
 import org.jboss.jpa.deployment.PersistenceUnitDeployment;
 import org.jboss.jpa.spi.PersistenceUnitRegistry;
@@ -68,4 +70,11 @@ public class PersistenceUnitRefResource implements Resource
    {
       return PersistenceUnitRefResource.class.getSimpleName() + "[supplier=" + this.puSupplier + "]";
    }
+   
+   @Override
+   public Collection<?> getInvocationDependencies()
+   {
+      return null;
+   }
+
 }
