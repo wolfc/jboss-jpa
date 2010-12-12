@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jboss-jpa-deployers</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2-alpha-3</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA Deployers</name>
   <description>
@@ -163,4 +163,10 @@
     
 
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/jpa/tags/1.0.2-alpha-3</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/jpa/tags/1.0.2-alpha-3</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jpa/tags/1.0.2-alpha-3</url>
+  </scm>
 </project>
