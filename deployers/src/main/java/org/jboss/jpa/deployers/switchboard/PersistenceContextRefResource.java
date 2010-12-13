@@ -63,15 +63,26 @@ public class PersistenceContextRefResource implements Resource
       return puSupplier;
    }
 
+   /**
+    * The PersistenceContext (PC) for a bean, is the EntityManager (EM) that
+    * will be used to access it.  Think of potentially, separate EM per bean
+    * in the transaction but possibly the same Database connection shared for
+    * each EM (via EE sharing of managed connections).
+    *
+    * The Extended PersistenceContext (XPC) identifies the EM to use for a set
+    * of session bean invocations that also reference the same XPC.  Think of
+    * one EM per transaction for the session beans.
+    *
+    * @return an object that can be bound that represents the target PersistentContext.
+    */
    @Override
    public Object getTarget()
    {
+      // TODO:  both of the following cases are wrong and a deeper fix is needed that addresses
+      // how we manage the PersistenceContext
       boolean extendedPc = PersistenceContextType.EXTENDED.equals(pcRef.getPersistenceContextType());
       if (extendedPc)
       {
-         // clearly this is wrong, since the non-extended case returns a factory that can be bound.
-         // hmm, I wonder if the else case already has the knowledge to return a factory that later returns
-         // the extended PC
          return PersistenceUnitRegistry.getPersistenceUnit(puSupplier).getXPCResolver().getExtendedPersistenceContext(puSupplier);
       }
       else
