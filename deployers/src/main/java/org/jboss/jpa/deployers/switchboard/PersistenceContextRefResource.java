@@ -65,13 +65,15 @@ public class PersistenceContextRefResource implements Resource
 
    /**
     * The PersistenceContext (PC) for a bean, is the EntityManager (EM) that
-    * will be used to access it.  Think of potentially, separate EM per bean
+    * will be used to access it.  Think of potentially, separate EM (different name) per bean
     * in the transaction but possibly the same Database connection shared for
-    * each EM (via EE sharing of managed connections).
+    * each EM (via EE sharing of managed connections).  Or same EM (same name) for each bean
+    * in the transaction.  The third case, would be separate EM (different name) per bean
+    * in the transaction and different resource managers (multiple DB servers).
     *
-    * The Extended PersistenceContext (XPC) identifies the EM to use for a set
-    * of session bean invocations that also reference the same XPC.  Think of
-    * one EM per transaction for the session beans.
+    * The Extended PersistenceContext (XPC) has the same capabilities as above, with an extended lifetime that
+    * is potentially long term.  Work done outside of a transaction, is queued up until the next transaction is
+    * committed or rolled back.  Work done inside of a transaction is committed like a PC would do.
     *
     * @return an object that can be bound that represents the target PersistentContext.
     */
