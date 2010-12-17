@@ -1,15 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.jpa</groupId>
-    <artifactId>jboss-jpa-build</artifactId>
-    <relativePath>../build/pom.xml</relativePath>
-    <version>1.0.2</version>
+    <artifactId>jboss-jpa-aggregator</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jboss-jpa-mcint</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA MicroContainer Integration</name>
   <description>
@@ -18,6 +16,10 @@
   </description>
   
   <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jboss-jpa-deployers</artifactId>
+    </dependency>
     <!-- For 'mocking' a TransactionManager we use JBossTS -->
     <!-- 
     <dependency>
@@ -30,8 +32,6 @@
   	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>test</scope>
     </dependency>
     <!-- For 'mocking' a DataSource we use Derby -->
     <!-- 
@@ -43,9 +43,8 @@
     </dependency>
     -->
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>ejb3-persistence</artifactId>
-      <version>1.0.2.GA</version>
+      <groupId>${javax.persistence.groupId}</groupId>
+      <artifactId>${javax.persistence.artifactId}</artifactId>
     </dependency>
     <!-- 
     <dependency>
@@ -78,11 +77,6 @@
       <version>2.0.0.CR2</version>
     </dependency>
     -->
-    <dependency>
-      <groupId>org.jboss.jpa</groupId>
-      <artifactId>jboss-jpa-deployers</artifactId>
-      <version>1.0.2-alpha-1</version>
-    </dependency>
     <!--
     <dependency>
       <groupId>org.jboss.metadata</groupId>

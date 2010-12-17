@@ -21,16 +21,9 @@
  */
 package org.jboss.jpa.remote.test.remote;
 
-import java.io.IOException;
-import java.rmi.MarshalledObject;
-
-import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
 import org.jboss.jpa.deployers.test.common.DerbyService;
 import org.jboss.jpa.deployers.test.common.Person;
-import org.jboss.jpa.remote.RemotelyInjectEntityManagerFactory;
+import org.jboss.jpa.impl.remote.RemotelyInjectEntityManagerFactory;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.metadata.jpa.spec.TransactionType;
 import org.jnp.server.SingletonNamingServer;
@@ -38,6 +31,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.naming.InitialContext;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import java.io.IOException;
+import java.rmi.MarshalledObject;
 
 /**
  * Note that this test doesn't really do remote, it uses serialization.
@@ -96,8 +95,9 @@ public class RemoteTestCase
       metaData.setName("remotePU");
       metaData.setNonJtaDataSource("remoteDS");
       metaData.setTransactionType(TransactionType.RESOURCE_LOCAL);
-      
-      RemotelyInjectEntityManagerFactory factory = new RemotelyInjectEntityManagerFactory(metaData, "dummy");
+
+      // I haven't got a clue how to deploy a validator factory
+      RemotelyInjectEntityManagerFactory factory = new RemotelyInjectEntityManagerFactory(metaData, "dummy", false);
       
       mo = new MarshalledObject(factory);
    }

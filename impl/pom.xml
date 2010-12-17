@@ -4,15 +4,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.jpa</groupId>
-    <artifactId>jboss-jpa-build</artifactId>
-    <relativePath>../build/pom.xml</relativePath>
-    <version>1.0.0</version>
+    <artifactId>jboss-jpa-aggregator</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jboss-jpa-impl</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA Implementation</name>
   <description>
@@ -26,6 +24,11 @@
   
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jboss-jpa-spi</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <version>1.8.0.10</version>
@@ -35,14 +38,11 @@
     <dependency>
       <groupId>jboss.jbossts</groupId>
       <artifactId>jbossjta</artifactId>
-      <version>4.4.0.GA</version>
       <scope>test</scope>
     </dependency>
   	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -75,17 +75,6 @@
       <version>5.0.3.GA</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jpa</groupId>
-      <artifactId>jboss-jpa-spi</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>ejb3-persistence</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-log4j</artifactId>
       <version>${version.org.jboss.logging}</version>
@@ -98,14 +87,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.metadata</groupId>
-      <artifactId>jboss-metadata</artifactId>
-      <version>1.0.2.Beta2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>ejb3-persistence</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>jboss-metadata-ejb</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.naming</groupId>

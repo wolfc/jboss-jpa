@@ -22,12 +22,6 @@
 
 package org.jboss.jpa.deployers.test.common;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.hibernate.cache.CacheDataDescription;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.CollectionRegion;
@@ -35,7 +29,14 @@ import org.hibernate.cache.EntityRegion;
 import org.hibernate.cache.QueryResultsRegion;
 import org.hibernate.cache.RegionFactory;
 import org.hibernate.cache.TimestampsRegion;
+import org.hibernate.cache.access.AccessType;
 import org.hibernate.cfg.Settings;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Mock impl of Hibernate RegionFactory used as a mechanism to validate
@@ -94,6 +95,11 @@ public class MockRegionFactory implements RegionFactory
    public boolean isMinimalPutsEnabledByDefault()
    {
       return false;
+   }
+
+   public AccessType getDefaultAccessType()
+   {
+      throw new RuntimeException("NYI: org.jboss.jpa.deployers.test.common.MockRegionFactory.getDefaultAccessType");
    }
 
    public long nextTimestamp()

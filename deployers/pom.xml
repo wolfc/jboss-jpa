@@ -4,15 +4,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.jboss.jpa</groupId>
-    <artifactId>jboss-jpa-build</artifactId>
-    <relativePath>../build/pom.xml</relativePath>
-    <version>1.0.1</version>
+    <artifactId>jboss-jpa-aggregator</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>jboss-jpa-deployers</artifactId>
-  <version>1.0.2-alpha-4-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>JBoss Container Managed JPA Deployers</name>
   <description>
@@ -26,18 +24,24 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jboss-jpa-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jboss-jpa-spi</artifactId>
+    </dependency>
+    
     <!-- For 'mocking' a TransactionManager we use JBossTS -->
     <dependency>
       <groupId>jboss.jbossts</groupId>
       <artifactId>jbossjta</artifactId>
-      <version>4.4.0.GA</version>
       <scope>test</scope>
     </dependency>
   	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>test</scope>
     </dependency>
     <!-- For 'mocking' a DataSource we use Derby -->
     <dependency>
@@ -49,7 +53,6 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>${version.org.hibernate.hibernate-entitymanager}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.integration</groupId>
@@ -73,33 +76,14 @@
       <version>${version.org.jboss.deployers}</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jpa</groupId>
-      <artifactId>jboss-jpa-impl</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.jpa</groupId>
-      <artifactId>jboss-jpa-spi</artifactId>
-      <version>1.0.0</version>
-      <!-- TODO: we should really use the right jpa-spi -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>ejb3-persistence</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.metadata</groupId>
-      <artifactId>jboss-metadata</artifactId>
-      <version>1.0.0.CR17</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>ejb3-persistence</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>jboss-metadata-common</artifactId>
     </dependency>
+     <dependency>
+       <groupId>org.jboss.metadata</groupId>
+       <artifactId>jboss-metadata-ear</artifactId>
+       <scope>test</scope>
+     </dependency>
     <!-- For @JMX -->
     <dependency>
       <groupId>org.jboss.microcontainer</groupId>
@@ -137,7 +121,6 @@
     <dependency>
       <groupId>org.jboss.slf4j</groupId>
       <artifactId>slf4j-jboss-logging</artifactId>
-      <version>1.0.0.GA</version>
       <scope>test</scope>
     </dependency>
     

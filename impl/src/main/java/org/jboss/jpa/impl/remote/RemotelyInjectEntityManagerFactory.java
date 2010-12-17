@@ -21,25 +21,6 @@
  */
 package org.jboss.jpa.impl.remote;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.naming.InitialContext;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-import javax.validation.ValidatorFactory;
-import javax.validation.Validation;
-
 import org.hibernate.ejb.HibernatePersistence;
 import org.jboss.jpa.impl.AbstractEntityManagerFactoryDelegator;
 import org.jboss.jpa.impl.JPAConstants;
@@ -48,6 +29,22 @@ import org.jboss.jpa.impl.deployment.PersistenceUnitInfoImpl;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.jpa.spec.PersistenceUnitMetaData;
 import org.jboss.metadata.jpa.spec.TransactionType;
+
+import javax.naming.InitialContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceProvider;
+import javax.persistence.spi.PersistenceUnitTransactionType;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * EXPERIMENTAL
@@ -72,17 +69,24 @@ public class RemotelyInjectEntityManagerFactory extends AbstractEntityManagerFac
    private Properties defaultPersistenceProperties = new Properties();
    private List<String> explicitEntityClasses = new ArrayList<String>();
    private String jaccContextId;
-   
+   private boolean wantsValidatorFactory;
+
    /**
     * Assume the data source name has been changed to a remote data source name.
     */
    public RemotelyInjectEntityManagerFactory(PersistenceUnitMetaData metaData, String jaccContextId)
    {
+      this(metaData, jaccContextId, true);
+   }
+
+   public RemotelyInjectEntityManagerFactory(PersistenceUnitMetaData metaData, String jaccContextId, boolean wantsValidatorFactory)
+   {
       assert metaData != null : "metaData is null";
       this.metaData = metaData;
       this.jaccContextId = jaccContextId;
+      this.wantsValidatorFactory = wantsValidatorFactory;
    }
-   
+
    public void close()
    {
       throw new RuntimeException("NYI");
@@ -117,7 +121,8 @@ public class RemotelyInjectEntityManagerFactory extends AbstractEntityManagerFac
 
       PersistenceProvider pp = (PersistenceProvider) providerClass.newInstance();
       Map<Object, Object> properties = new HashMap<Object, Object>(1);
-      properties.put( JPAConstants.BEAN_VALIDATION_FACTORY, new ValidatorFactoryProvider().getValidatorFactory() );
+      if(wantsValidatorFactory)
+         properties.put( JPAConstants.BEAN_VALIDATION_FACTORY, new ValidatorFactoryProvider().getValidatorFactory() );
       actualFactory = pp.createContainerEntityManagerFactory(pi, properties);      
    }
    

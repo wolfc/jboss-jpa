@@ -1,3 +1,5 @@
 /*/eclipse-target
-/*/target
+/.idea
+*.iml
+target
 .svn

@@ -1,28 +1,207 @@
 <!--
   vi:ts=2:sw=2:expandtab
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>org.jboss</groupId>
-    <artifactId>jboss-parent</artifactId>
-    <version>4.0.CR1</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <parent>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-parent</artifactId>
+      <version>5</version>
+   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
+   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>jboss-jpa-aggregator</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>JBoss Container Managed JPA Aggregator</name>
-  
-  <modules>
-    <module>build</module>
-    <module>deployers</module>
-    <module>vfs2</module>
-    <module>vfs3</module>
-    <module>impl</module>
-    <module>spi</module>
-  </modules>
+   <groupId>org.jboss.jpa</groupId>
+   <artifactId>jboss-jpa-aggregator</artifactId>
+   <version>3.0.0-SNAPSHOT</version>
+   <packaging>pom</packaging>
+   <name>JBoss Container Managed JPA Aggregator</name>
+
+   <build>
+      <!-- make it easier to copy it around -->
+      <finalName>${artifactId}</finalName>
+
+      <plugins>
+         <plugin>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <configuration>
+               <rules>
+                  <bannedDependencies>
+                     <excludes>
+                        <!-- use ${javax.persistence.groupId}:${javax.persistence.artifactId} -->
+                        <exclude>org.hibernate:ejb3-persistence</exclude>
+                        <!-- use org.jboss.metadata:jboss-metadata-common -->
+                        <exclude>org.jboss.metadata:jboss-metadata</exclude>
+                     </excludes>
+                  </bannedDependencies>
+               </rules>
+            </configuration>
+         </plugin>
+         <plugin>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+               <autoVersionSubmodules>true</autoVersionSubmodules>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+   <dependencyManagement>
+      <dependencies>
+         <dependency>
+            <groupId>${javax.persistence.groupId}</groupId>
+            <artifactId>${javax.persistence.artifactId}</artifactId>
+            <version>1.0.0.Final</version>
+         </dependency>
+         
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jboss-jpa-deployers</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jboss-jpa-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jboss-jpa-spi</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+
+         <!-- For 'mocking' a TransactionManager we use JBossTS -->
+         <dependency>
+            <groupId>jboss.jbossts</groupId>
+            <artifactId>jbossjta</artifactId>
+            <version>4.4.0.GA</version>
+         </dependency>
+         
+         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+         </dependency>
+
+         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.4.0.GA</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>org.hibernate</groupId>
+                  <artifactId>ejb3-persistence</artifactId>
+               </exclusion>
+            </exclusions>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-spi</artifactId>
+            <version>2.1.0.GA</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.metadata</groupId>
+            <artifactId>jboss-metadata-common</artifactId>
+            <version>2.0.0.Alpha23</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>org.hibernate</groupId>
+                  <artifactId>ejb3-persistence</artifactId>
+               </exclusion>
+            </exclusions>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.metadata</groupId>
+            <artifactId>jboss-metadata-ear</artifactId>
+            <version>2.0.0.Alpha4</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.metadata</groupId>
+            <artifactId>jboss-metadata-ejb</artifactId>
+            <version>2.0.0-alpha-26</version>
+         </dependency>
+
+         <dependency>
+            <groupId>org.jboss.slf4j</groupId>
+            <artifactId>slf4j-jboss-logging</artifactId>
+            <version>1.0.2.GA</version>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
+
+   <modules>
+      <module>deployers</module>
+      <module>impl</module>
+      <module>mcint</module>
+      <module>spi</module>
+      <module>vfs2</module>
+      <module>vfs3</module>
+   </modules>
+
+   <profiles>
+      <profile>
+         <id>JPA-1.0</id>
+         <activation>
+            <property>
+               <name>!dummy</name>
+            </property>
+         </activation>
+         <properties>
+            <JPA.groupId>org.hibernate</JPA.groupId>
+            <JPA.artifactId>ejb3-persistence</JPA.artifactId>
+            <JPA.version>1.0.2.GA</JPA.version>
+            <version.org.hibernate.hibernate-entitymanager>3.4.0.GA</version.org.hibernate.hibernate-entitymanager>
+         </properties>
+      </profile>
+      <profile>
+         <id>JPA-2.0</id>
+         <activation>
+            <property>
+               <name>JPA-2.0</name>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <artifactId>maven-enforcer-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <id>obsoletes-org.hibernate:ejb3-persistence</id>
+                        <goals>
+                           <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                           <rules>
+                              <bannedDependencies>
+                                 <excludes>
+                                    <exclude>org.hibernate:ejb3-persistence</exclude>
+                                 </excludes>
+                              </bannedDependencies>
+                           </rules>
+                        </configuration>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+         <properties>
+            <JPA.groupId>org.hibernate.persistence</JPA.groupId>
+            <JPA.artifactId>jpa-api</JPA.artifactId>
+            <JPA.version>2.0-cr-1</JPA.version>
+            <version.org.hibernate.hibernate-entitymanager>3.5.0-Beta-2</version.org.hibernate.hibernate-entitymanager>
+         </properties>
+      </profile>
+   </profiles>
+
+   <properties>
+      <javax.persistence.groupId>org.hibernate.javax.persistence</javax.persistence.groupId>
+      <javax.persistence.artifactId>hibernate-jpa-2.0-api</javax.persistence.artifactId>
+   </properties>
 </project>
